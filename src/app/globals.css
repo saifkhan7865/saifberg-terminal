@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #000000;
+  --color-foreground: #e2c97e;
+
+  /* Terminal palette */
+  --color-t-bg: #000000;
+  --color-t-panel: #080808;
+  --color-t-panel2: #0d0d0d;
+  --color-t-border: #1a1a1a;
+  --color-t-border2: #2a2a2a;
+  --color-t-amber: #e2c97e;
+  --color-t-amber2: #f5a623;
+  --color-t-green: #22c55e;
+  --color-t-green2: #4ade80;
+  --color-t-red: #ef4444;
+  --color-t-red2: #f87171;
+  --color-t-blue: #38bdf8;
+  --color-t-blue2: #7dd3fc;
+  --color-t-cyan: #06b6d4;
+  --color-t-gray: #4b5563;
+  --color-t-gray2: #6b7280;
+  --color-t-gray3: #9ca3af;
+  --color-t-muted: #374151;
+
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', ui-monospace, monospace;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #000000;
+  color: #e2c97e;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a #080808;
+}
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+*::-webkit-scrollbar-track {
+  background: #080808;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 2px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+/* Selection */
+::selection {
+  background: #1d3a5e;
+  color: #7dd3fc;
+}
+
+/* Remove default input styles */
+input:focus {
+  outline: none;
+}
+
+/* Animated cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Glow effects */
+.glow-green {
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+.glow-red {
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+.glow-amber {
+  text-shadow: 0 0 8px rgba(226, 201, 126, 0.4);
+}
+.glow-blue {
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+
+/* Signal badge colors */
+.signal-strong-buy {
+  background: rgba(20, 83, 45, 0.8);
+  border: 1px solid #16a34a;
+  color: #4ade80;
+}
+.signal-buy {
+  background: rgba(20, 83, 45, 0.4);
+  border: 1px solid #22c55e;
+  color: #86efac;
+}
+.signal-hold {
+  background: rgba(92, 58, 0, 0.5);
+  border: 1px solid #d97706;
+  color: #fcd34d;
+}
+.signal-sell {
+  background: rgba(127, 29, 29, 0.4);
+  border: 1px solid #dc2626;
+  color: #fca5a5;
+}
+.signal-strong-sell {
+  background: rgba(127, 29, 29, 0.8);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+}
+
+/* Pulse animation for live indicator */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+.pulse-live {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #0d0d0d 25%, #1a1a1a 50%, #0d0d0d 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
