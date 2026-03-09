@@ -55,32 +55,32 @@ export async function GET(req: NextRequest) {
 
     const latestMacd = macdHistory[macdHistory.length - 1] || null;
 
-    // Generate signals
-    const signals: { name: string; value: string; signal: string; detail: string }[] = [];
+    // Generate signals — value must be number (TechnicalPanel calls .toFixed() on it)
+    const signals: { name: string; value: number | null; signal: 'BULLISH' | 'BEARISH' | 'NEUTRAL'; detail: string }[] = [];
 
     if (rsi != null) {
-      const sig = rsi < 30 ? 'OVERSOLD' : rsi > 70 ? 'OVERBOUGHT' : 'NEUTRAL';
-      signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: sig, detail: rsi < 30 ? 'Oversold — potential bounce' : rsi > 70 ? 'Overbought — may pull back' : 'Neutral zone (30-70)' });
+      const sig: 'BULLISH' | 'BEARISH' | 'NEUTRAL' = rsi < 30 ? 'BULLISH' : rsi > 70 ? 'BEARISH' : 'NEUTRAL';
+      signals.push({ name: 'RSI(14)', value: rsi, signal: sig, detail: rsi < 30 ? 'Oversold — potential bounce' : rsi > 70 ? 'Overbought — may pull back' : 'Neutral zone (30-70)' });
     }
     if (sma20 != null && price != null) {
-      const sig = price > sma20 ? 'BULLISH' : 'BEARISH';
-      signals.push({ name: 'SMA 20', value: sma20.toFixed(2), signal: sig, detail: price > sma20 ? `Price $${price.toFixed(2)} above 20-day MA` : `Price $${price.toFixed(2)} below 20-day MA` });
+      const sig: 'BULLISH' | 'BEARISH' | 'NEUTRAL' = price > sma20 ? 'BULLISH' : 'BEARISH';
+      signals.push({ name: 'SMA 20', value: sma20, signal: sig, detail: price > sma20 ? `Price $${price.toFixed(2)} above 20-day MA` : `Price $${price.toFixed(2)} below 20-day MA` });
     }
     if (sma50 != null && price != null) {
-      const sig = price > sma50 ? 'BULLISH' : 'BEARISH';
-      signals.push({ name: 'SMA 50', value: sma50.toFixed(2), signal: sig, detail: price > sma50 ? `Above 50-day MA — medium-term uptrend` : `Below 50-day MA — medium-term downtrend` });
+      const sig: 'BULLISH' | 'BEARISH' | 'NEUTRAL' = price > sma50 ? 'BULLISH' : 'BEARISH';
+      signals.push({ name: 'SMA 50', value: sma50, signal: sig, detail: price > sma50 ? `Above 50-day MA — medium-term uptrend` : `Below 50-day MA — medium-term downtrend` });
     }
     if (sma200 != null && price != null) {
-      const sig = price > sma200 ? 'BULLISH' : 'BEARISH';
-      signals.push({ name: 'SMA 200', value: sma200.toFixed(2), signal: sig, detail: price > sma200 ? `Above 200-day MA — long-term uptrend` : `Below 200-day MA — long-term downtrend` });
+      const sig: 'BULLISH' | 'BEARISH' | 'NEUTRAL' = price > sma200 ? 'BULLISH' : 'BEARISH';
+      signals.push({ name: 'SMA 200', value: sma200, signal: sig, detail: price > sma200 ? `Above 200-day MA — long-term uptrend` : `Below 200-day MA — long-term downtrend` });
     }
     if (latestMacd) {
-      const sig = latestMacd.histogram > 0 ? 'BULLISH' : 'BEARISH';
-      signals.push({ name: 'MACD', value: latestMacd.macd.toFixed(2), signal: sig, detail: latestMacd.histogram > 0 ? 'MACD above signal — bullish momentum' : 'MACD below signal — bearish momentum' });
+      const sig: 'BULLISH' | 'BEARISH' | 'NEUTRAL' = latestMacd.histogram > 0 ? 'BULLISH' : 'BEARISH';
+      signals.push({ name: 'MACD', value: latestMacd.macd, signal: sig, detail: latestMacd.histogram > 0 ? 'MACD above signal — bullish momentum' : 'MACD below signal — bearish momentum' });
     }
 
-    const bullishCount = signals.filter(s => s.signal === 'BULLISH' || s.signal === 'OVERSOLD').length;
-    const bearishCount = signals.filter(s => s.signal === 'BEARISH' || s.signal === 'OVERBOUGHT').length;
+    const bullishCount = signals.filter(s => s.signal === 'BULLISH').length;
+    const bearishCount = signals.filter(s => s.signal === 'BEARISH').length;
     const overallSignal = bullishCount > bearishCount ? 'BULLISH' : bearishCount > bullishCount ? 'BEARISH' : 'NEUTRAL';
 
     return NextResponse.json({
