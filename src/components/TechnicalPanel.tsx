@@ -6,6 +6,68 @@ import {
   ReferenceLine, BarChart, Bar, ComposedChart,
 } from 'recharts';
 import { apiFetch } from '@/lib/apiClient';
+import { Info } from 'lucide-react';
+
+// ─── Inline hover tooltip ─────────────────────────────────────────────────────
+function InfoTip({ lines }: { lines: string[] }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="relative inline-flex items-center">
+      <button
+        onMouseEnter={() => setShow(true)}
+        onMouseLeave={() => setShow(false)}
+        className="flex items-center"
+        style={{ color: '#374151' }}
+      >
+        <Info size={10} />
+      </button>
+      {show && (
+        <div className="absolute left-0 top-5 z-50 w-72 rounded border p-3 shadow-xl"
+          style={{ background: '#0d0d0d', borderColor: '#222' }}>
+          {lines.map((l, i) => (
+            <p key={i} className={`text-[9px] leading-relaxed ${i > 0 ? 'mt-1.5' : ''}`}
+              style={{ color: i === 0 ? '#c9b97a' : '#6b7280' }}>
+              {l}
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const SIGNAL_TIPS: Record<string, string[]> = {
+  'RSI(14)': [
+    'Relative Strength Index — measures momentum on a 0–100 scale.',
+    '< 30 = Oversold → stock may be undervalued, potential bounce.',
+    '> 70 = Overbought → stock may be overvalued, potential pullback.',
+    '30–70 = Neutral zone, no strong signal.',
+  ],
+  'SMA 20': [
+    '20-day Simple Moving Average — average price over the last 20 trading days.',
+    'Price ABOVE SMA 20 → short-term uptrend, bullish.',
+    'Price BELOW SMA 20 → short-term downtrend, bearish.',
+    'Acts as dynamic support/resistance.',
+  ],
+  'SMA 50': [
+    '50-day Simple Moving Average — medium-term trend indicator.',
+    'Price ABOVE SMA 50 → medium-term uptrend.',
+    'Price BELOW SMA 50 → medium-term downtrend.',
+    'The "Golden Cross" (SMA 50 crosses above SMA 200) is a major bullish signal.',
+  ],
+  'SMA 200': [
+    '200-day Simple Moving Average — the most-watched long-term trend line.',
+    'Price ABOVE SMA 200 → long-term bull market.',
+    'Price BELOW SMA 200 → long-term bear market.',
+    'Institutional investors use this as a key buy/sell threshold.',
+  ],
+  'MACD': [
+    'Moving Average Convergence Divergence — trend and momentum indicator.',
+    'MACD line = EMA(12) − EMA(26). Signal line = EMA(9) of MACD.',
+    'MACD > Signal (histogram positive) → bullish momentum.',
+    'MACD < Signal (histogram negative) → bearish momentum.',
+  ],
+};
 
 interface TechnicalSignal {
   name: string;
@@ -111,37 +173,46 @@ export default function TechnicalPanel({ symbol }: Props) {
               border: `1px solid ${signalColor(s.signal)}40`,
               color: signalColor(s.signal),
             }}
-            title={s.detail}
           >
             {s.name}
             <span className="text-[7px] opacity-80">{s.value != null ? s.value.toFixed(1) : '—'}</span>
             <span>{s.signal}</span>
+            {SIGNAL_TIPS[s.name] && (
+              <InfoTip lines={SIGNAL_TIPS[s.name]} />
+            )}
           </div>
         ))}
       </div>
 
       {/* Overall signal banner */}
-      <div className="rounded p-3 flex items-center gap-3"
-        style={{
-          background: signalBg(overallSignal),
-          border: `1px solid ${signalColor(overallSignal)}30`,
-        }}>
-        <div className="text-[22px] font-black tracking-widest" style={{ color: signalColor(overallSignal) }}>
-          {overallSignal}
-        </div>
-        <div className="text-[8px]" style={{ color: '#374151' }}>
-          Overall technical signal based on RSI, Moving Averages & MACD
-        </div>
-        {price != null && (
-          <div className="ml-auto text-[11px] font-mono font-black" style={{ color: '#e2c97e' }}>
-            ${price.toFixed(2)}
+      <div className="rounded p-3" style={{ background: signalBg(overallSignal), border: `1px solid ${signalColor(overallSignal)}30` }}>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="text-[22px] font-black tracking-widest" style={{ color: signalColor(overallSignal) }}>
+            {overallSignal}
           </div>
-        )}
+          <div className="text-[8px]" style={{ color: '#374151' }}>
+            Overall signal based on RSI + Moving Averages + MACD
+          </div>
+          {price != null && (
+            <div className="ml-auto text-[11px] font-mono font-black" style={{ color: '#e2c97e' }}>
+              ${price.toFixed(2)}
+            </div>
+          )}
+        </div>
+        {/* Plain-English summary */}
+        <div className="text-[9px] leading-relaxed pt-2 border-t" style={{ borderColor: `${signalColor(overallSignal)}20`, color: '#6b7280' }}>
+          {overallSignal === 'BULLISH' && '📈 Most indicators point UP — the stock has positive momentum. Buyers are in control. Consider watching for a pullback to enter.'}
+          {overallSignal === 'BEARISH' && '📉 Most indicators point DOWN — the stock is under selling pressure. Bears are in control. Wait for stabilization before buying.'}
+          {overallSignal === 'NEUTRAL' && '↔️ Mixed signals — no clear trend. The stock is consolidating. Wait for a breakout in either direction before making a move.'}
+        </div>
       </div>
 
       {/* RSI gauge + chart */}
       <div className="rounded border p-3 space-y-3" style={{ background: '#040404', borderColor: '#111' }}>
-        <div className="text-[8px] font-black tracking-[0.2em]" style={{ color: '#4b5563' }}>RSI (14)</div>
+        <div className="flex items-center gap-1.5">
+          <div className="text-[8px] font-black tracking-[0.2em]" style={{ color: '#4b5563' }}>RSI (14)</div>
+          <InfoTip lines={SIGNAL_TIPS['RSI(14)']} />
+        </div>
 
         {/* Gauge bar */}
         <div>
@@ -205,7 +276,15 @@ export default function TechnicalPanel({ symbol }: Props) {
 
       {/* Moving averages table */}
       <div className="rounded border p-3" style={{ background: '#040404', borderColor: '#111' }}>
-        <div className="text-[8px] font-black tracking-[0.2em] mb-3" style={{ color: '#4b5563' }}>MOVING AVERAGES</div>
+        <div className="flex items-center gap-1.5 mb-3">
+          <div className="text-[8px] font-black tracking-[0.2em]" style={{ color: '#4b5563' }}>MOVING AVERAGES</div>
+          <InfoTip lines={[
+            'Moving averages smooth out price to show the trend direction.',
+            'Price ABOVE MA → trend is up (bullish). Price BELOW MA → trend is down (bearish).',
+            'SMA 20 = short-term (1 month)  ·  SMA 50 = medium-term  ·  SMA 200 = long-term (1 year)',
+            'When SMA 50 crosses above SMA 200 = "Golden Cross" 🟢. Below = "Death Cross" 🔴.',
+          ]} />
+        </div>
         <div className="space-y-2">
           {[
             { label: 'SMA 20', value: sma20 },
@@ -217,8 +296,11 @@ export default function TechnicalPanel({ symbol }: Props) {
             const diff  = price != null ? ((price - value) / value * 100) : null;
             const c     = above ? '#22c55e' : '#ef4444';
             return (
-              <div key={label} className="flex items-center justify-between">
-                <span className="text-[9px] font-black w-16" style={{ color: '#6b7280' }}>{label}</span>
+              <div key={label} className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1 w-20 flex-shrink-0">
+                  <span className="text-[9px] font-black" style={{ color: '#6b7280' }}>{label}</span>
+                  <InfoTip lines={SIGNAL_TIPS[label] ?? []} />
+                </div>
                 <span className="text-[9px] font-mono flex-1 text-center" style={{ color: '#9ca3af' }}>
                   ${value.toFixed(2)}
                 </span>
@@ -241,7 +323,10 @@ export default function TechnicalPanel({ symbol }: Props) {
       {macdChartData.length > 0 && (
         <div className="rounded border p-3" style={{ background: '#040404', borderColor: '#111' }}>
           <div className="flex items-center justify-between mb-3">
-            <div className="text-[8px] font-black tracking-[0.2em]" style={{ color: '#4b5563' }}>MACD (12, 26, 9)</div>
+            <div className="flex items-center gap-1.5">
+              <div className="text-[8px] font-black tracking-[0.2em]" style={{ color: '#4b5563' }}>MACD (12, 26, 9)</div>
+              <InfoTip lines={SIGNAL_TIPS['MACD']} />
+            </div>
             {macd && (
               <div className="flex gap-3">
                 <span className="text-[8px] font-mono" style={{ color: '#38bdf8' }}>
