@@ -14,10 +14,12 @@ import FilingsPanel from './FilingsPanel';
 import EarningsPanel from './EarningsPanel';
 import DividendsPanel from './DividendsPanel';
 import IPOPanel from './IPOPanel';
+import TechnicalPanel from './TechnicalPanel';
+import DCFPanel from './DCFPanel';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Cmd = 'GP' | 'FA' | 'AI' | 'CN' | 'PEERS' | 'FILINGS' | 'ERN' | 'DVD' | 'IPO';
+type Cmd = 'GP' | 'FA' | 'AI' | 'CN' | 'PEERS' | 'FILINGS' | 'ERN' | 'DVD' | 'IPO' | 'TA' | 'DCF';
 
 interface CmdDef { label: string; desc: string; color: string; }
 
@@ -31,6 +33,8 @@ const COMMANDS: Record<Cmd, CmdDef> = {
   ERN:     { label: 'ERN',     desc: 'Earnings Calendar',  color: '#fbbf24' },
   DVD:     { label: 'DVD',     desc: 'Dividends',          color: '#4ade80' },
   IPO:     { label: 'IPO',     desc: 'IPO Calendar',       color: '#f472b6' },
+  TA:      { label: 'TA',      desc: 'Technical Analysis', color: '#22c55e' },
+  DCF:     { label: 'DCF',     desc: 'Valuation Model',    color: '#38bdf8' },
 };
 
 const CMD_ALIASES: Record<string, Cmd> = {
@@ -43,6 +47,8 @@ const CMD_ALIASES: Record<string, Cmd> = {
   ERN: 'ERN', EARN: 'ERN', EARNINGS: 'ERN', ECAL: 'ERN',
   DVD: 'DVD', DIVS: 'DVD', DIVIDENDS: 'DVD', DIV: 'DVD',
   IPO: 'IPO', IPOS: 'IPO',
+  TA: 'TA', TECH: 'TA', TECHNICAL: 'TA', RSI: 'TA', MACD: 'TA',
+  DCF: 'DCF', VALUATION: 'DCF', VAL: 'DCF', INTRINSIC: 'DCF',
 };
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
@@ -339,6 +345,8 @@ export default function StockDetail({ symbol }: Props) {
         {activeCmd === 'ERN'     && <EarningsPanel />}
         {activeCmd === 'DVD'     && <DividendsPanel symbol={symbol} />}
         {activeCmd === 'IPO'     && <IPOPanel />}
+        {activeCmd === 'TA'      && <TechnicalPanel symbol={symbol} />}
+        {activeCmd === 'DCF'     && <DCFPanel symbol={symbol} />}
       </div>
     </div>
   );

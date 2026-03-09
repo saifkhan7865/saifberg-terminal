@@ -312,18 +312,49 @@ export interface FMPMover {
 }
 
 export async function getGainers(apiKey?: string): Promise<FMPMover[]> {
-  const data = await fmpFetch<FMPMover[]>('/gainers', apiKey);
-  return (data ?? []).slice(0, 8);
+  const data = await fmpFetch<FMPMover[]>('/biggest-gainers', apiKey);
+  return (data ?? []).slice(0, 15);
 }
 
 export async function getLosers(apiKey?: string): Promise<FMPMover[]> {
-  const data = await fmpFetch<FMPMover[]>('/losers', apiKey);
-  return (data ?? []).slice(0, 8);
+  const data = await fmpFetch<FMPMover[]>('/biggest-losers', apiKey);
+  return (data ?? []).slice(0, 15);
+}
+
+interface FMPScreenerStock {
+  symbol: string; companyName: string; marketCap: number;
+  price: number; volume: number; beta: number; sector: string; industry: string;
 }
 
 export async function getMostActive(apiKey?: string): Promise<FMPMover[]> {
-  const data = await fmpFetch<FMPMover[]>('/actives', apiKey);
-  return (data ?? []).slice(0, 8);
+  const data = await fmpFetch<FMPScreenerStock[]>(
+    '/company-screener?marketCapMoreThan=1000000000&exchange=NYSE,NASDAQ&limit=50',
+    apiKey
+  );
+  const top15 = (data ?? [])
+    .sort((a, b) => (b.volume ?? 0) - (a.volume ?? 0))
+    .slice(0, 15);
+
+  // Fetch live quotes for each to get real changePercentage
+  const quoteResults = await Promise.allSettled(
+    top15.map(s =>
+      fmpFetch<{ symbol: string; changePercentage?: number; changesPercentage?: number; change?: number; price?: number }[]>(
+        `/quote?symbol=${encodeURIComponent(s.symbol)}`,
+        apiKey
+      ).then(d => d?.[0] ?? null)
+    )
+  );
+
+  return top15.map((s, i) => {
+    const q = quoteResults[i].status === 'fulfilled' ? quoteResults[i].value : null;
+    return {
+      symbol: s.symbol,
+      name: s.companyName,
+      change: q?.change ?? 0,
+      price: q?.price ?? s.price,
+      changesPercentage: q?.changePercentage ?? q?.changesPercentage ?? 0,
+    };
+  });
 }
 
 // ─── Sector Performance ──────────────────────────────────────────────────────
@@ -336,6 +367,50 @@ export interface FMPSectorPerformance {
 export async function getSectorPerformance(apiKey?: string): Promise<FMPSectorPerformance[]> {
   const data = await fmpFetch<FMPSectorPerformance[]>('/sector-performance', apiKey);
   return data ?? [];
+}
+
+// ─── Analyst Recommendations (buy/hold/sell counts) ─────────────────────────
+
+export interface FMPAnalystCounts {
+  symbol: string;
+  date: string;
+  analystRatingsbuy: number;
+  analystRatingsHold: number;
+  analystRatingsSell: number;
+  analystRatingsStrongSell: number;
+  analystRatingsStrongBuy: number;
+}
+
+export async function getAnalystCounts(symbol: string, apiKey?: string): Promise<FMPAnalystCounts | null> {
+  try {
+    const data = await fmpFetch<FMPAnalystCounts[]>(
+      `/analyst-stock-recommendations?symbol=${encodeURIComponent(symbol)}&limit=1`, apiKey
+    );
+    return data?.[0] ?? null;
+  } catch { return null; }
+}
+
+// ─── Upgrades / Downgrades ───────────────────────────────────────────────────
+
+export interface FMPUpgrade {
+  symbol: string;
+  publishedDate: string;
+  newsURL: string;
+  newsTitle: string;
+  newsPublisher: string;
+  newGrade: string;
+  previousGrade: string;
+  gradingCompany: string;
+  action: string;
+}
+
+export async function getUpgradesDowngrades(symbol: string, apiKey?: string): Promise<FMPUpgrade[]> {
+  try {
+    const data = await fmpFetch<FMPUpgrade[]>(
+      `/upgrades-downgrades-graded?symbol=${encodeURIComponent(symbol)}&limit=20`, apiKey
+    );
+    return data ?? [];
+  } catch { return []; }
 }
 
 // ─── Historical Prices (chart) ────────────────────────────────────────────────

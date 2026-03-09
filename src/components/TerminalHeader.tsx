@@ -8,11 +8,12 @@ import SettingsModal from './SettingsModal';
 interface Props {
   currentSymbol: string;
   onSelect: (symbol: string) => void;
+  onHome?: () => void;
 }
 
 const POPULAR = ['AAPL', 'MSFT', 'NVDA', 'GOOGL', 'META', 'AMZN', 'TSLA', 'SPY', 'QQQ', 'BTC-USD'];
 
-export default function TerminalHeader({ currentSymbol, onSelect }: Props) {
+export default function TerminalHeader({ currentSymbol, onSelect, onHome }: Props) {
   const [time, setTime] = useState('');
   const [date, setDate] = useState('');
   const [showSettings, setShowSettings] = useState(false);
@@ -37,21 +38,25 @@ export default function TerminalHeader({ currentSymbol, onSelect }: Props) {
         boxShadow: '0 1px 0 #0d0d0d',
       }}
     >
-      {/* Logo */}
-      <div className="flex items-center gap-2 flex-shrink-0">
+      {/* Logo — click to go home */}
+      <button
+        onClick={onHome}
+        className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity"
+        title="Home"
+      >
         <BarChart2 size={16} style={{ color: '#f5a623' }} />
-        <div>
+        <div className="text-left">
           <div
             className="text-[13px] font-black tracking-[0.2em] leading-none"
             style={{ color: '#f5a623', textShadow: '0 0 12px rgba(245,166,35,0.4)' }}
           >
             SAIFBERG
           </div>
-          <div className="text-[7px] font-bold tracking-[0.3em]" style={{ color: '#4b5563' }}>
-            TERMINAL
+          <div className="text-[7px] font-bold tracking-[0.3em]" style={{ color: currentSymbol ? '#4b5563' : '#f5a623' }}>
+            {currentSymbol ? 'TERMINAL' : '● HOME'}
           </div>
         </div>
-      </div>
+      </button>
 
       {/* Divider */}
       <div className="w-px h-6 flex-shrink-0" style={{ background: '#1a1a1a' }} />

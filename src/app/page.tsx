@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import TerminalHeader from '@/components/TerminalHeader';
-import MarketOverview from '@/components/MarketOverview';
+import StockSidebar from '@/components/StockSidebar';
 import StockDetail from '@/components/StockDetail';
 import NewsPanel from '@/components/NewsPanel';
-import SectorHeatmap from '@/components/SectorHeatmap';
+import PeersBar from '@/components/PeersBar';
 import HomeBoard from '@/components/HomeBoard';
 
 export default function Terminal() {
@@ -17,47 +17,39 @@ export default function Terminal() {
       style={{ height: '100dvh', background: '#000', overflow: 'hidden' }}
     >
       {/* ── HEADER ─────────────────────────────────────────────────── */}
-      <TerminalHeader currentSymbol={activeSymbol ?? ''} onSelect={setActiveSymbol} />
+      <TerminalHeader currentSymbol={activeSymbol ?? ''} onSelect={setActiveSymbol} onHome={() => setActiveSymbol(null)} />
 
-      {/* ── MAIN 3-COLUMN BODY ─────────────────────────────────────── */}
-      <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
+      {activeSymbol ? (
+        /* ── STOCK VIEW: everything about the stock ─────────────────── */
+        <>
+          <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
+            {/* LEFT: Stock quick stats + analyst + peers list */}
+            <div className="flex-shrink-0 overflow-hidden border-r" style={{ width: 220, borderColor: '#1a1a1a' }}>
+              <StockSidebar symbol={activeSymbol} onSelectTicker={setActiveSymbol} />
+            </div>
 
-        {/* LEFT PANEL — Market Overview */}
-        <div
-          className="flex-shrink-0 overflow-hidden border-r"
-          style={{ width: 220, borderColor: '#1a1a1a' }}
-        >
-          <MarketOverview onSelectTicker={setActiveSymbol} />
+            {/* CENTER: Stock detail (GP/FA/AI/CN/PEERS/FILINGS/ERN/DVD/IPO) */}
+            <div className="flex-1 overflow-hidden border-r" style={{ borderColor: '#1a1a1a', minWidth: 0 }}>
+              <StockDetail symbol={activeSymbol} />
+            </div>
+
+            {/* RIGHT: Company news */}
+            <div className="flex-shrink-0 overflow-hidden" style={{ width: 300 }}>
+              <NewsPanel symbol={activeSymbol} />
+            </div>
+          </div>
+
+          {/* BOTTOM: Peer comparison bar */}
+          <div className="flex-shrink-0 border-t" style={{ height: 88, borderColor: '#1a1a1a' }}>
+            <PeersBar symbol={activeSymbol} onSelectTicker={setActiveSymbol} />
+          </div>
+        </>
+      ) : (
+        /* ── HOME DASHBOARD: full width market overview ──────────────── */
+        <div className="flex-1 overflow-hidden" style={{ minHeight: 0 }}>
+          <HomeBoard onSelect={setActiveSymbol} />
         </div>
-
-        {/* CENTER PANEL — Home Board or Stock Detail */}
-        <div
-          className="flex-1 overflow-hidden border-r"
-          style={{ borderColor: '#1a1a1a', minWidth: 0 }}
-        >
-          {activeSymbol ? (
-            <StockDetail symbol={activeSymbol} />
-          ) : (
-            <HomeBoard onSelect={setActiveSymbol} />
-          )}
-        </div>
-
-        {/* RIGHT PANEL — News Feed */}
-        <div
-          className="flex-shrink-0 overflow-hidden"
-          style={{ width: 300 }}
-        >
-          <NewsPanel symbol={activeSymbol ?? 'AAPL'} />
-        </div>
-      </div>
-
-      {/* ── BOTTOM — Sector Heatmap ─────────────────────────────────── */}
-      <div
-        className="flex-shrink-0 border-t"
-        style={{ height: 88, borderColor: '#1a1a1a' }}
-      >
-        <SectorHeatmap onSelectTicker={setActiveSymbol} />
-      </div>
+      )}
     </div>
   );
 }

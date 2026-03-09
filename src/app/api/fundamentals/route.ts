@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   getProfile, getQuote, getKeyMetrics, getIncomeStatement,
   getBalanceSheet, getCashFlow, getRatios, getPriceTarget,
-  getRating, getRevenueGrowth,
+  getRating, getRevenueGrowth, getAnalystCounts,
 } from '@/lib/fmp';
 
 export async function GET(req: NextRequest) {
@@ -14,11 +14,12 @@ export async function GET(req: NextRequest) {
   try {
     const sym = symbol.toUpperCase();
 
-    const [profileR, quoteR, kmR, incomeR, balanceR, cashR, ratiosR, ptR, ratingR, rgR] =
+    const [profileR, quoteR, kmR, incomeR, balanceR, cashR, ratiosR, ptR, ratingR, rgR, analystR] =
       await Promise.allSettled([
         getProfile(sym, apiKey), getQuote(sym, apiKey), getKeyMetrics(sym, apiKey),
         getIncomeStatement(sym, apiKey), getBalanceSheet(sym, apiKey), getCashFlow(sym, apiKey),
         getRatios(sym, apiKey), getPriceTarget(sym, apiKey), getRating(sym, apiKey), getRevenueGrowth(sym, apiKey),
+        getAnalystCounts(sym, apiKey),
       ]);
 
     const p  = profileR.status  === 'fulfilled' ? profileR.value  : null;
@@ -31,6 +32,7 @@ export async function GET(req: NextRequest) {
     const pt = ptR.status       === 'fulfilled' ? ptR.value       : null;
     const rt = ratingR.status   === 'fulfilled' ? ratingR.value   : null;
     const rg = rgR.status       === 'fulfilled' ? rgR.value       : null;
+    const ac = analystR.status  === 'fulfilled' ? analystR.value  : null;
 
     const ratingMap: Record<string, number> = {
       'Strong Buy': 1.5, 'Buy': 2.0, 'Neutral': 3.0, 'Sell': 4.0, 'Strong Sell': 4.5,
