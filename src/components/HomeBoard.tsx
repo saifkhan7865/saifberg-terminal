@@ -6,10 +6,12 @@ import {
   Zap, AlertTriangle, Eye, Clock, Activity, ChevronLeft, BarChart2,
 } from 'lucide-react';
 import { apiFetch } from '@/lib/apiClient';
+import { tagNews } from '@/lib/newsTags';
 import MacroDashboard from './MacroDashboard';
 import EarningsCalendar from './EarningsCalendar';
 import StockScreener from './StockScreener';
 import AIPicker from './AIPicker';
+import OptionsFlow from './OptionsFlow';
 
 // ─── Market Status ────────────────────────────────────────────────────────────
 function getMarketStatus(): { label: string; color: string; detail: string } {
@@ -110,13 +112,13 @@ function SectorRow({ sector, onClick, isActive }: { sector: Sector; onClick: () 
   return (
     <div onClick={onClick}
       className="flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors border-b"
-      style={{ borderColor: '#080808', background: isActive ? '#0a0a0a' : 'transparent',
+      style={{ borderColor: '#161b22', background: isActive ? '#0a0a0a' : 'transparent',
         borderLeft: isActive ? '2px solid #f5a623' : '2px solid transparent' }}
     >
       <div className="w-[42px] text-[9px] font-black flex-shrink-0" style={{ color: isActive ? '#f5a623' : '#9ca3af' }}>
         {sector.shortName}
       </div>
-      <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#111' }}>
+      <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#1c2128' }}>
         <div className="h-full rounded-full" style={{ width: `${barW}%`, background: fillBg }} />
       </div>
       <div className="w-[52px] text-right text-[10px] font-black font-mono flex-shrink-0" style={{ color }}>
@@ -130,14 +132,15 @@ function SectorRow({ sector, onClick, isActive }: { sector: Sector; onClick: () 
 }
 
 // ─── Tab definitions ─────────────────────────────────────────────────────────
-type HomeTab = 'OVERVIEW' | 'MACRO' | 'EARNINGS' | 'SCREENER' | 'PICK';
+type HomeTab = 'OVERVIEW' | 'MACRO' | 'EARNINGS' | 'SCREENER' | 'PICK' | 'OPTIONS';
 
 const HOME_TABS: { id: HomeTab; label: string; icon: string; color: string }[] = [
-  { id: 'OVERVIEW', label: 'OVERVIEW',    icon: '⊙', color: '#f5a623' },
-  { id: 'MACRO',    label: 'MACRO',       icon: '📊', color: '#38bdf8' },
-  { id: 'EARNINGS', label: 'EARNINGS',    icon: '📅', color: '#fbbf24' },
-  { id: 'SCREENER', label: 'SCREENER',    icon: '⊗', color: '#4ade80' },
-  { id: 'PICK',     label: 'PICK A STOCK',icon: '🧠', color: '#a78bfa' },
+  { id: 'OVERVIEW', label: 'OVERVIEW',     icon: '⊙', color: '#f5a623' },
+  { id: 'MACRO',    label: 'MACRO',        icon: '📊', color: '#38bdf8' },
+  { id: 'EARNINGS', label: 'EARNINGS',     icon: '📅', color: '#fbbf24' },
+  { id: 'OPTIONS',  label: 'OPTIONS FLOW', icon: '⚡', color: '#f472b6' },
+  { id: 'SCREENER', label: 'SCREENER',     icon: '⊗', color: '#4ade80' },
+  { id: 'PICK',     label: 'AI PICK',      icon: '🧠', color: '#a78bfa' },
 ];
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -246,26 +249,26 @@ export default function HomeBoard({ onSelect }: Props) {
   const aiSectorRec = aiResult?.sectors?.[0]?.name;
 
   return (
-    <div className="flex flex-col h-full overflow-hidden" style={{ background: '#000' }}>
+    <div className="flex flex-col h-full overflow-hidden" style={{ background: '#0d1117' }}>
 
       {/* ══ TOP: Status + Index Ticker ════════════════════════════════ */}
-      <div className="flex-shrink-0" style={{ background: '#020202', borderBottom: '1px solid #111' }}>
+      <div className="flex-shrink-0" style={{ background: '#161b22', borderBottom: '1px solid #21262d' }}>
         {/* Status bar */}
-        <div className="flex items-center justify-between px-4 py-1.5 border-b" style={{ borderColor: '#0a0a0a' }}>
+        <div className="flex items-center justify-between px-4 py-2 border-b" style={{ borderColor: '#21262d' }}>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full flex-shrink-0"
                 style={{ background: mktStatus.color, boxShadow: mktStatus.label === 'MARKET OPEN' ? `0 0 6px ${mktStatus.color}` : 'none' }} />
-              <span className="text-[9px] font-black tracking-[0.18em]" style={{ color: mktStatus.color }}>{mktStatus.label}</span>
+              <span className="text-[10px] font-black tracking-[0.18em]" style={{ color: mktStatus.color }}>{mktStatus.label}</span>
             </div>
-            <span className="text-[9px]" style={{ color: '#374151' }}>{mktStatus.detail}</span>
+            <span className="text-[10px]" style={{ color: '#8b949e' }}>{mktStatus.detail}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-[8px] mr-1" style={{ color: '#1f2937' }}>QUICK JUMP</span>
+            <span className="text-[9px] mr-1 font-bold tracking-widest" style={{ color: '#484f58' }}>QUICK JUMP</span>
             {['AAPL', 'MSFT', 'NVDA', 'TSLA', 'GOOGL', 'META', 'AMZN', 'BTCUSD'].map(s => (
               <button key={s} onClick={() => onSelect(s)}
-                className="px-1.5 py-0.5 rounded text-[8px] font-black tracking-wide hover:bg-[#1a1000] transition-all"
-                style={{ border: '1px solid #1f1f1f', color: '#e2c97e' }}
+                className="px-2 py-0.5 rounded text-[9px] font-black tracking-wide hover:bg-[#21262d] transition-all"
+                style={{ border: '1px solid #30363d', color: '#e2c97e' }}
               >{s}</button>
             ))}
           </div>
@@ -278,18 +281,18 @@ export default function HomeBoard({ onSelect }: Props) {
             return (
               <div key={symbol} onClick={() => onSelect(symbol)}
                 className="flex-1 px-3 py-2.5 cursor-pointer hover:bg-[#080808] transition-all border-r"
-                style={{ borderColor: '#0d0d0d' }}
+                style={{ borderColor: '#1c2128' }}
               >
-                <div className="text-[7px] font-black tracking-[0.15em] mb-0.5" style={{ color: '#374151' }}>{label}</div>
+                <div className="text-[8px] font-black tracking-[0.15em] mb-0.5" style={{ color: '#6e7681' }}>{label}</div>
                 {loading ? (
                   <div className="space-y-1"><div className="h-4 rounded shimmer" /><div className="h-2.5 w-3/4 rounded shimmer" /></div>
                 ) : (
                   <>
-                    <div className="text-[15px] font-black font-mono leading-none" style={{ color: q ? color : '#2a2a2a' }}>
+                    <div className="text-[15px] font-black font-mono leading-none" style={{ color: q ? color : '#30363d' }}>
                       {q ? `$${fmtPrice(q.price)}` : '—'}
                     </div>
                     <div className="text-[9px] font-bold flex items-center gap-0.5 mt-0.5"
-                      style={{ color: q ? (up ? '#22c55e' : '#ef4444') : '#2a2a2a' }}>
+                      style={{ color: q ? (up ? '#22c55e' : '#ef4444') : '#30363d' }}>
                       {q && (up ? <TrendingUp size={8} /> : <TrendingDown size={8} />)}
                       {q ? fmtPct(q.changesPercentage) : '—'}
                     </div>
@@ -302,22 +305,28 @@ export default function HomeBoard({ onSelect }: Props) {
       </div>
 
       {/* ══ TAB BAR ══════════════════════════════════════════════════ */}
-      <div className="flex flex-shrink-0 border-b" style={{ borderColor: '#111', background: '#010101' }}>
-        {HOME_TABS.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className="px-5 py-2 text-[9px] font-black tracking-[0.15em] transition-all flex items-center gap-1.5"
-            style={{
-              borderBottom: `2px solid ${activeTab === tab.id ? tab.color : 'transparent'}`,
-              color: activeTab === tab.id ? tab.color : '#374151',
-              background: activeTab === tab.id ? `${tab.color}08` : 'transparent',
-            }}
-          >
-            <span>{tab.icon}</span>
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex flex-shrink-0 border-b px-2 gap-1 items-end" style={{ borderColor: '#21262d', background: '#161b22', paddingTop: 6 }}>
+        {HOME_TABS.map(tab => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className="px-4 py-2 text-[11px] font-black tracking-[0.12em] transition-all flex items-center gap-2 rounded-t"
+              style={{
+                borderBottom: `2px solid ${isActive ? tab.color : 'transparent'}`,
+                color: isActive ? tab.color : '#8b949e',
+                background: isActive ? `${tab.color}15` : 'transparent',
+                boxShadow: isActive ? `inset 0 1px 0 ${tab.color}30` : 'none',
+              }}
+              onMouseEnter={e => { if (!isActive) { e.currentTarget.style.color = '#e6edf3'; e.currentTarget.style.background = '#21262d'; } }}
+              onMouseLeave={e => { if (!isActive) { e.currentTarget.style.color = '#8b949e'; e.currentTarget.style.background = 'transparent'; } }}
+            >
+              <span style={{ fontSize: 13 }}>{tab.icon}</span>
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* ══ TAB CONTENT ══════════════════════════════════════════════ */}
@@ -329,6 +338,11 @@ export default function HomeBoard({ onSelect }: Props) {
       {activeTab === 'EARNINGS' && (
         <div className="flex-1 overflow-hidden">
           <EarningsCalendar onSelect={onSelect} />
+        </div>
+      )}
+      {activeTab === 'OPTIONS' && (
+        <div className="flex-1 overflow-hidden">
+          <OptionsFlow onSelect={onSelect} />
         </div>
       )}
       {activeTab === 'SCREENER' && (
@@ -346,12 +360,12 @@ export default function HomeBoard({ onSelect }: Props) {
       <div className={`flex flex-1 overflow-hidden${activeTab !== 'OVERVIEW' ? ' hidden' : ''}`} style={{ minHeight: 0 }}>
 
         {/* ── LEFT: Sectors ──────────────────────────────────────── */}
-        <div className="flex-shrink-0 flex flex-col overflow-hidden border-r" style={{ width: 210, borderColor: '#111' }}>
-          <div className="flex items-center justify-between px-3 py-1.5 border-b flex-shrink-0" style={{ borderColor: '#111' }}>
-            <span className="text-[8px] font-black tracking-[0.2em]" style={{ color: '#4b5563' }}>SECTOR PERFORMANCE</span>
+        <div className="flex-shrink-0 flex flex-col overflow-hidden border-r" style={{ width: 210, borderColor: '#21262d' }}>
+          <div className="flex items-center justify-between px-3 py-2 border-b flex-shrink-0" style={{ borderColor: '#21262d' }}>
+            <span className="text-[9px] font-black tracking-[0.2em]" style={{ color: '#8b949e' }}>SECTOR PERFORMANCE</span>
             <div className="flex gap-2">
-              <span className="text-[7px] font-bold" style={{ color: '#1f2937' }}>TODAY</span>
-              <span className="text-[7px] font-bold" style={{ color: '#1f2937' }}>1M</span>
+              <span className="text-[8px] font-bold" style={{ color: '#6e7681' }}>TODAY</span>
+              <span className="text-[8px] font-bold" style={{ color: '#6e7681' }}>1M</span>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto">
@@ -390,15 +404,15 @@ export default function HomeBoard({ onSelect }: Props) {
         </div>
 
         {/* ── CENTER: Movers OR Sector Stocks ────────────────────── */}
-        <div className="flex-1 flex flex-col overflow-hidden border-r" style={{ borderColor: '#111', minWidth: 0 }}>
+        <div className="flex-1 flex flex-col overflow-hidden border-r" style={{ borderColor: '#21262d', minWidth: 0 }}>
 
           {activeSector ? (
             /* Sector Stocks drill-down */
             <>
-              <div className="flex items-center gap-2 px-4 py-2 border-b flex-shrink-0" style={{ borderColor: '#111', background: '#030303' }}>
+              <div className="flex items-center gap-2 px-4 py-2 border-b flex-shrink-0" style={{ borderColor: '#21262d', background: '#161b22' }}>
                 <button onClick={() => setActiveSector(null)}
                   className="flex items-center gap-1 text-[8px] font-bold hover:opacity-70 transition-opacity"
-                  style={{ color: '#374151' }}
+                  style={{ color: '#8b949e' }}
                 >
                   <ChevronLeft size={11} /> BACK
                 </button>
@@ -411,7 +425,7 @@ export default function HomeBoard({ onSelect }: Props) {
                     {fmtPct(activeSector.changePercent)} TODAY
                   </span>
                   {activeSector.change1M != null && (
-                    <span className="text-[8px]" style={{ color: '#374151' }}>
+                    <span className="text-[8px]" style={{ color: '#6e7681' }}>
                       · {fmtPct(activeSector.change1M)} 1M
                     </span>
                   )}
@@ -428,35 +442,35 @@ export default function HomeBoard({ onSelect }: Props) {
                   </div>
                 ) : (
                   <div className="py-1">
-                    <div className="flex items-center px-4 py-1 border-b" style={{ borderColor: '#080808' }}>
+                    <div className="flex items-center px-4 py-1.5 border-b" style={{ borderColor: '#21262d' }}>
                       <div className="w-5 flex-shrink-0" />
-                      <div className="flex-1 text-[7px] font-black tracking-widest" style={{ color: '#1f2937' }}>SYMBOL / COMPANY</div>
-                      <div className="w-[90px] text-right text-[7px] font-black tracking-widest" style={{ color: '#1f2937' }}>MKT CAP</div>
-                      <div className="w-[70px] text-right text-[7px] font-black tracking-widest" style={{ color: '#1f2937' }}>PRICE</div>
-                      <div className="w-[55px] text-right text-[7px] font-black tracking-widest" style={{ color: '#1f2937' }}>BETA</div>
-                      <div className="w-[70px] text-right text-[7px] font-black tracking-widest" style={{ color: '#1f2937' }}>VOLUME</div>
+                      <div className="flex-1 text-[8px] font-black tracking-widest" style={{ color: '#484f58' }}>SYMBOL / COMPANY</div>
+                      <div className="w-[90px] text-right text-[8px] font-black tracking-widest" style={{ color: '#484f58' }}>MKT CAP</div>
+                      <div className="w-[70px] text-right text-[8px] font-black tracking-widest" style={{ color: '#484f58' }}>PRICE</div>
+                      <div className="w-[55px] text-right text-[8px] font-black tracking-widest" style={{ color: '#484f58' }}>BETA</div>
+                      <div className="w-[70px] text-right text-[8px] font-black tracking-widest" style={{ color: '#484f58' }}>VOLUME</div>
                     </div>
                     {sectorStocks.map((s, i) => (
                       <div key={s.symbol} onClick={() => onSelect(s.symbol)}
-                        className="flex items-center px-4 py-2.5 cursor-pointer hover:bg-[#080808] transition-colors border-b"
-                        style={{ borderColor: '#050505' }}
+                        className="flex items-center px-4 py-2 cursor-pointer hover:bg-[#1c2128] transition-colors border-b"
+                        style={{ borderColor: '#21262d' }}
                       >
-                        <div className="w-5 text-[9px] font-mono flex-shrink-0" style={{ color: '#1f2937' }}>{i + 1}</div>
+                        <div className="w-5 text-[8px] font-mono flex-shrink-0" style={{ color: '#484f58' }}>{i + 1}</div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-[12px] font-black leading-none" style={{ color: '#e2c97e' }}>{s.symbol}</div>
-                          <div className="text-[8px] truncate mt-0.5 max-w-[180px]" style={{ color: '#374151' }}>{s.industry}</div>
+                          <div className="text-[11px] font-black leading-none" style={{ color: '#e2c97e' }}>{s.symbol}</div>
+                          <div className="text-[8px] truncate mt-0.5 max-w-[180px]" style={{ color: '#6e7681' }}>{s.industry}</div>
                         </div>
-                        <div className="w-[90px] text-right text-[10px] font-mono font-bold" style={{ color: '#c9b97a' }}>
+                        <div className="w-[90px] text-right text-[10px] font-mono font-bold" style={{ color: '#e2c97e' }}>
                           {fmtB(s.marketCap)}
                         </div>
-                        <div className="w-[70px] text-right text-[10px] font-mono" style={{ color: '#9ca3af' }}>
+                        <div className="w-[70px] text-right text-[10px] font-mono" style={{ color: '#8b949e' }}>
                           ${fmtPrice(s.price)}
                         </div>
                         <div className="w-[55px] text-right text-[9px] font-mono"
                           style={{ color: s.beta > 1.5 ? '#f87171' : s.beta > 1 ? '#fbbf24' : '#4ade80' }}>
                           {s.beta?.toFixed(2) ?? '—'}
                         </div>
-                        <div className="w-[70px] text-right text-[9px] flex items-center justify-end gap-0.5" style={{ color: '#374151' }}>
+                        <div className="w-[70px] text-right text-[9px] flex items-center justify-end gap-0.5" style={{ color: '#6e7681' }}>
                           <Activity size={8} />{fmtVol(s.volume)}
                         </div>
                       </div>
@@ -468,21 +482,21 @@ export default function HomeBoard({ onSelect }: Props) {
           ) : (
             /* Market Movers */
             <>
-              <div className="flex border-b flex-shrink-0" style={{ borderColor: '#111' }}>
+              <div className="flex border-b flex-shrink-0" style={{ borderColor: '#21262d', background: '#161b22' }}>
                 {(['gainers', 'losers', 'actives'] as MoverTab[]).map(t => (
                   <button key={t} onClick={() => setMoverTab(t)}
-                    className="px-5 py-2 text-[9px] font-black tracking-[0.15em] transition-all"
+                    className="px-5 py-2 text-[10px] font-black tracking-[0.12em] transition-all"
                     style={{
                       borderBottom: `2px solid ${moverTab === t ? moverColors[t] : 'transparent'}`,
-                      color: moverTab === t ? moverColors[t] : '#374151',
-                      background: moverTab === t ? `${moverColors[t]}0a` : 'transparent',
+                      color: moverTab === t ? moverColors[t] : '#8b949e',
+                      background: moverTab === t ? `${moverColors[t]}12` : 'transparent',
                     }}
                   >{moverLabels[t]}</button>
                 ))}
                 <div className="flex-1" />
                 <button onClick={fetchData} disabled={loading}
                   className="px-3 flex items-center gap-1 text-[8px] font-bold disabled:opacity-40"
-                  style={{ color: '#2a2a2a' }}
+                  style={{ color: '#6e7681' }}
                 >
                   <RefreshCw size={9} className={loading ? 'animate-spin' : ''} />
                 </button>
@@ -496,18 +510,18 @@ export default function HomeBoard({ onSelect }: Props) {
                   <div className="flex flex-col items-center justify-center h-full gap-3">
                     <Clock size={22} style={{ color: '#1f2937' }} />
                     <div className="text-center">
-                      <div className="text-[11px] font-black mb-1" style={{ color: '#2a2a2a' }}>{mktStatus.label}</div>
+                      <div className="text-[11px] font-black mb-1" style={{ color: '#30363d' }}>{mktStatus.label}</div>
                       <div className="text-[9px]" style={{ color: '#1f2937' }}>Mover data available during market hours</div>
                     </div>
                   </div>
                 ) : (
                   <div className="py-1">
-                    <div className="flex items-center px-4 py-1 border-b" style={{ borderColor: '#080808' }}>
+                    <div className="flex items-center px-4 py-1.5 border-b" style={{ borderColor: '#21262d' }}>
                       <div className="w-5 flex-shrink-0" />
-                      <div className="flex-1 text-[7px] font-black tracking-widest" style={{ color: '#1f2937' }}>SYMBOL</div>
-                      <div className="w-[80px] text-right text-[7px] font-black tracking-widest" style={{ color: '#1f2937' }}>CHANGE</div>
-                      <div className="w-[80px] text-right text-[7px] font-black tracking-widest" style={{ color: '#1f2937' }}>PRICE</div>
-                      <div className="w-[60px] text-right text-[7px] font-black tracking-widest" style={{ color: '#1f2937' }}>VOLUME</div>
+                      <div className="flex-1 text-[8px] font-black tracking-widest" style={{ color: '#484f58' }}>SYMBOL</div>
+                      <div className="w-[80px] text-right text-[8px] font-black tracking-widest" style={{ color: '#484f58' }}>CHANGE</div>
+                      <div className="w-[80px] text-right text-[8px] font-black tracking-widest" style={{ color: '#484f58' }}>PRICE</div>
+                      <div className="w-[60px] text-right text-[8px] font-black tracking-widest" style={{ color: '#484f58' }}>VOLUME</div>
                     </div>
                     {currentMovers.slice(0, 15).map((m, i) => {
                       const up  = (m.changePercent ?? 0) >= 0;
@@ -515,23 +529,23 @@ export default function HomeBoard({ onSelect }: Props) {
                       const barW = Math.min(Math.abs(m.changePercent ?? 0) * 8, 100);
                       return (
                         <div key={m.symbol} onClick={() => onSelect(m.symbol)}
-                          className="relative flex items-center px-4 py-2.5 cursor-pointer hover:bg-[#080808] transition-colors border-b overflow-hidden"
-                          style={{ borderColor: '#050505' }}
+                          className="relative flex items-center px-4 py-1.5 cursor-pointer hover:bg-[#1c2128] transition-colors border-b overflow-hidden"
+                          style={{ borderColor: '#21262d' }}
                         >
-                          <div className="absolute inset-y-0 left-0 opacity-[0.04]" style={{ width: `${barW}%`, background: c }} />
-                          <div className="relative w-5 text-[9px] font-mono flex-shrink-0" style={{ color: '#1f2937' }}>{i + 1}</div>
+                          <div className="absolute inset-y-0 left-0 opacity-[0.06]" style={{ width: `${barW}%`, background: c }} />
+                          <div className="relative w-5 text-[8px] font-mono flex-shrink-0" style={{ color: '#484f58' }}>{i + 1}</div>
                           <div className="relative flex-1 min-w-0">
-                            <div className="text-[12px] font-black leading-none" style={{ color: '#e2c97e' }}>{m.symbol}</div>
-                            <div className="text-[8px] truncate mt-0.5 max-w-[140px]" style={{ color: '#374151' }}>{m.shortName}</div>
+                            <div className="text-[11px] font-black leading-none" style={{ color: '#e2c97e' }}>{m.symbol}</div>
+                            <div className="text-[8px] truncate mt-0.5 max-w-[140px]" style={{ color: '#6e7681' }}>{m.shortName}</div>
                           </div>
                           <div className="relative w-[80px] text-right">
-                            <div className="text-[13px] font-black font-mono" style={{ color: c }}>{fmtPct(m.changePercent)}</div>
+                            <div className="text-[12px] font-black font-mono" style={{ color: c }}>{fmtPct(m.changePercent)}</div>
                           </div>
                           <div className="relative w-[80px] text-right">
-                            <div className="text-[11px] font-mono" style={{ color: '#9ca3af' }}>${fmtPrice(m.price)}</div>
+                            <div className="text-[10px] font-mono" style={{ color: '#8b949e' }}>${fmtPrice(m.price)}</div>
                           </div>
                           <div className="relative w-[60px] text-right">
-                            <div className="flex items-center justify-end gap-0.5 text-[9px]" style={{ color: '#374151' }}>
+                            <div className="flex items-center justify-end gap-0.5 text-[9px]" style={{ color: '#6e7681' }}>
                               <Activity size={8} />{fmtVol(m.volume)}
                             </div>
                           </div>
@@ -545,164 +559,193 @@ export default function HomeBoard({ onSelect }: Props) {
           )}
         </div>
 
-        {/* ── RIGHT: AI Market Brief ──────────────────────────────── */}
+        {/* ── RIGHT: News + AI Brief ──────────────────────────────── */}
         <div className="flex-shrink-0 flex flex-col overflow-hidden" style={{ width: 360 }}>
+
+          {/* Panel header */}
           <div className="flex items-center justify-between px-3 py-2 border-b flex-shrink-0"
-            style={{ borderColor: '#111', background: '#020202' }}>
+            style={{ borderColor: '#21262d', background: '#161b22' }}>
             <div className="flex items-center gap-1.5">
-              <Brain size={11} style={{ color: '#a78bfa' }} />
-              <span className="text-[9px] font-black tracking-[0.2em]" style={{ color: '#a78bfa' }}>AI MARKET BRIEF</span>
+              <Activity size={11} style={{ color: '#8b949e' }} />
+              <span className="text-[9px] font-black tracking-[0.2em]" style={{ color: '#e6edf3' }}>MARKETS NEWS</span>
             </div>
-            <button onClick={() => runAI(sectors, news, quotes)} disabled={aiLoading}
-              className="flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black tracking-widest disabled:opacity-40 transition-all"
-              style={{ background: '#160d33', border: '1px solid #4c1d95', color: '#a78bfa' }}
-            >
-              <RefreshCw size={8} className={aiLoading ? 'animate-spin' : ''} />
-              {aiLoading ? 'ANALYZING...' : 'REFRESH'}
-            </button>
+            <div className="flex items-center gap-1.5">
+              {news.length > 0 && (
+                <span className="text-[7px] font-black px-1.5 py-0.5 rounded-full"
+                  style={{ background: 'rgba(63,185,80,0.12)', border: '1px solid rgba(63,185,80,0.3)', color: '#3fb950' }}>
+                  ● LIVE
+                </span>
+              )}
+              <button onClick={() => runAI(sectors, news, quotes)} disabled={aiLoading}
+                className="flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black tracking-widest disabled:opacity-40 transition-all"
+                style={{ background: 'rgba(188,140,255,0.08)', border: '1px solid rgba(188,140,255,0.2)', color: '#bc8cff' }}
+              >
+                <Brain size={8} className={aiLoading ? 'animate-spin' : ''} />
+                {aiLoading ? 'AI...' : 'AI BRIEF'}
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            {aiLoading ? (
-              <div className="p-4 space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full pulse-live" style={{ background: '#a78bfa' }} />
-                  <span className="text-[9px]" style={{ color: '#374151' }}>GEMINI ANALYZING MARKET DATA...</span>
+
+            {/* ── HEADLINES FIRST (always visible) ── */}
+            {news.length > 0 && (
+              <div>
+                <div className="px-3 py-1.5 border-b sticky top-0 z-10"
+                  style={{ borderColor: '#21262d', background: '#161b22' }}>
+                  <span className="text-[9px] font-black tracking-[0.2em]" style={{ color: '#8b949e' }}>
+                    LATEST HEADLINES
+                  </span>
                 </div>
-                {[95, 80, 90, 65, 100, 72, 85, 60, 90].map((w, i) => (
-                  <div key={i} className="h-3 rounded shimmer" style={{ width: `${w}%` }} />
-                ))}
-              </div>
-            ) : aiError ? (
-              <div className="p-4 flex items-start gap-2">
-                <AlertTriangle size={12} style={{ color: '#ef4444', flexShrink: 0, marginTop: 1 }} />
-                <div>
-                  <div className="text-[10px] font-black mb-1" style={{ color: '#ef4444' }}>ANALYSIS UNAVAILABLE</div>
-                  <div className="text-[9px] leading-snug" style={{ color: '#4b5563' }}>{aiError}</div>
-                </div>
-              </div>
-            ) : !aiResult ? (
-              <div className="flex flex-col items-center justify-center h-full gap-3 p-6">
-                <Brain size={28} style={{ color: '#1e1033' }} />
-                <p className="text-[9px] text-center leading-relaxed" style={{ color: '#1f2937' }}>
-                  AI market brief auto-loads on startup.<br />Requires a Gemini API key.
-                </p>
-              </div>
-            ) : (
-              <div className="p-3 space-y-2.5">
-
-                {/* Market prediction — top card */}
-                {aiResult.prediction && (
-                  <div className="rounded-lg p-3" style={{ background: '#0d0820', border: '1px solid #4c1d95' }}>
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <Zap size={9} style={{ color: '#a78bfa' }} />
-                      <span className="text-[7px] font-black tracking-[0.25em]" style={{ color: '#a78bfa' }}>MARKET PREDICTION</span>
-                    </div>
-                    <p className="text-[10px] leading-relaxed font-medium" style={{ color: '#c4b5fd' }}>{aiResult.prediction}</p>
-                  </div>
-                )}
-
-                {/* Market mood */}
-                {aiResult.mood && (
-                  <div className="rounded-lg p-3" style={{ background: '#060606', border: '1px solid #111' }}>
-                    <div className="text-[7px] font-black tracking-[0.25em] mb-1.5" style={{ color: '#4b5563' }}>MARKET MOOD</div>
-                    <p className="text-[11px] leading-relaxed" style={{ color: '#c9b97a' }}>{aiResult.mood}</p>
-                  </div>
-                )}
-
-                {/* Sectors to invest in */}
-                {aiResult.sectors.length > 0 && (
-                  <div className="rounded-lg p-3" style={{ background: '#010d1a', border: '1px solid #0c4a6e' }}>
-                    <div className="flex items-center gap-1.5 mb-2">
-                      <Eye size={9} style={{ color: '#38bdf8' }} />
-                      <span className="text-[7px] font-black tracking-[0.25em]" style={{ color: '#38bdf8' }}>SECTORS TO INVEST IN</span>
-                    </div>
-                    <div className="space-y-2.5">
-                      {aiResult.sectors.map((s, i) => (
-                        <div key={i} className="border-l-2 pl-2 cursor-pointer hover:opacity-80 transition-opacity"
-                          style={{ borderColor: i === 0 ? '#0ea5e9' : '#0369a1' }}
-                          onClick={() => {
-                            const found = sectors.find(sec => sec.name.toLowerCase().includes(s.name.toLowerCase()) || s.name.toLowerCase().includes(sec.shortName.toLowerCase()));
-                            if (found) loadSectorStocks(found);
-                          }}
-                        >
-                          <div className="flex items-center gap-1.5 mb-0.5">
-                            <div className="text-[10px] font-black" style={{ color: '#38bdf8' }}>{s.name}</div>
-                            {i === 0 && <span className="text-[7px] font-black px-1 py-px rounded" style={{ background: '#0c4a6e', color: '#7dd3fc' }}>TOP PICK</span>}
-                          </div>
-                          <p className="text-[9px] leading-snug" style={{ color: '#7dd3fc' }}>{s.reason}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Top stock */}
-                {aiResult.topStock && (
-                  <div className="rounded-lg p-3 cursor-pointer hover:brightness-125 transition-all"
-                    style={{ background: '#020f02', border: '1px solid #14532d' }}
-                    onClick={() => aiResult.topStock && onSelect(aiResult.topStock.ticker)}
+                {news.slice(0, 12).map((item, i) => {
+                  const tag = tagNews(item.headline);
+                  return (
+                  <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
+                    className="block px-3 py-2 border-b hover:bg-[#21262d] transition-colors group"
+                    style={{ borderColor: '#21262d', textDecoration: 'none' }}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <TrendingUp size={9} style={{ color: '#22c55e' }} />
-                        <span className="text-[7px] font-black tracking-[0.25em]" style={{ color: '#22c55e' }}>TOP STOCK OPPORTUNITY</span>
-                      </div>
-                      <span className="text-[7px] font-black px-1.5 py-0.5 rounded"
-                        style={{ background: '#052e16', color: '#4ade80', border: '1px solid #166534' }}>ANALYZE →</span>
+                    <div className="flex items-start gap-1.5 mb-0.5">
+                      {tag && (
+                        <span className="flex-shrink-0 text-[7px] font-black tracking-widest px-1 py-0.5 rounded mt-0.5"
+                          style={{ color: tag.color, background: tag.bg, border: `1px solid ${tag.color}30` }}>
+                          {tag.label}
+                        </span>
+                      )}
+                      <p className="text-[10px] leading-snug font-medium group-hover:text-[#79c0ff] transition-colors flex-1"
+                        style={{ color: '#e6edf3' }}>{item.headline}</p>
                     </div>
-                    <div className="text-[20px] font-black leading-none mb-1" style={{ color: '#4ade80' }}>{aiResult.topStock.ticker}</div>
-                    <p className="text-[9px] leading-snug" style={{ color: '#86efac' }}>{aiResult.topStock.reason}</p>
-                  </div>
-                )}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[8px] font-bold" style={{ color: '#8b949e' }}>{item.source?.toUpperCase()}</span>
+                      <span className="text-[8px]" style={{ color: '#484f58' }}>
+                        {item.datetime ? new Date(item.datetime * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : ''}
+                      </span>
+                    </div>
+                  </a>
+                  );
+                })}
+              </div>
+            )}
 
-                {/* Catalysts */}
-                {aiResult.catalysts.length > 0 && (
-                  <div className="rounded-lg p-3" style={{ background: '#080600', border: '1px solid #1c1000' }}>
-                    <div className="flex items-center gap-1.5 mb-2">
-                      <Zap size={9} style={{ color: '#fbbf24' }} />
-                      <span className="text-[7px] font-black tracking-[0.25em]" style={{ color: '#fbbf24' }}>KEY CATALYSTS</span>
-                    </div>
-                    <div className="space-y-1.5">
-                      {aiResult.catalysts.map((c, i) => (
-                        <div key={i} className="flex gap-2">
-                          <span className="text-[9px] font-black flex-shrink-0 mt-0.5" style={{ color: '#f59e0b' }}>~</span>
-                          <span className="text-[9px] leading-snug" style={{ color: '#fcd34d' }}>{c}</span>
-                        </div>
-                      ))}
-                    </div>
+            {/* ── AI BRIEF BELOW NEWS ── */}
+            {(aiResult || aiLoading || aiError) && (
+              <div>
+                <div className="px-3 py-1.5 border-b border-t sticky top-0 z-10"
+                  style={{ borderColor: '#21262d', background: '#161b22' }}>
+                  <div className="flex items-center gap-1.5">
+                    <Brain size={9} style={{ color: '#bc8cff' }} />
+                    <span className="text-[8px] font-black tracking-[0.2em]" style={{ color: '#bc8cff' }}>AI MARKET BRIEF</span>
                   </div>
-                )}
+                </div>
 
-                {/* Risk */}
-                {aiResult.risk && (
-                  <div className="rounded-lg flex items-start gap-2 p-3"
-                    style={{ background: '#080202', border: '1px solid #1f0505' }}>
-                    <AlertTriangle size={10} style={{ color: '#ef4444', flexShrink: 0, marginTop: 1 }} />
-                    <div>
-                      <div className="text-[7px] font-black tracking-[0.2em] mb-1" style={{ color: '#7f1d1d' }}>RISK ALERT</div>
-                      <p className="text-[9px] leading-snug" style={{ color: '#6b7280' }}>{aiResult.risk}</p>
+                {aiLoading ? (
+                  <div className="p-4 space-y-2">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-1.5 h-1.5 rounded-full pulse-live" style={{ background: '#bc8cff' }} />
+                      <span className="text-[9px]" style={{ color: '#6e7681' }}>GEMINI ANALYZING MARKET DATA...</span>
                     </div>
-                  </div>
-                )}
-
-                {/* Headlines */}
-                {news.length > 0 && (
-                  <div>
-                    <div className="text-[7px] font-black tracking-[0.25em] mb-1.5 pt-1" style={{ color: '#1f2937' }}>
-                      HEADLINES USED IN ANALYSIS
-                    </div>
-                    {news.slice(0, 8).map((item, i) => (
-                      <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
-                        className="block py-1.5 px-1 border-b hover:bg-[#080808] rounded transition-colors"
-                        style={{ borderColor: '#080808', textDecoration: 'none' }}
-                      >
-                        <p className="text-[9px] leading-snug" style={{ color: '#4b5563' }}>{item.headline}</p>
-                        <span className="text-[7px] font-black" style={{ color: '#1f2937' }}>{item.source?.toUpperCase()}</span>
-                      </a>
+                    {[95, 80, 90, 65, 100, 72, 85].map((w, i) => (
+                      <div key={i} className="h-2.5 rounded shimmer" style={{ width: `${w}%` }} />
                     ))}
                   </div>
-                )}
+                ) : aiError ? (
+                  <div className="p-3 flex items-start gap-2">
+                    <AlertTriangle size={11} style={{ color: '#f85149', flexShrink: 0, marginTop: 1 }} />
+                    <div>
+                      <div className="text-[9px] font-bold mb-0.5" style={{ color: '#f85149' }}>ANALYSIS UNAVAILABLE</div>
+                      <div className="text-[8px] leading-snug" style={{ color: '#6e7681' }}>{aiError}</div>
+                    </div>
+                  </div>
+                ) : aiResult ? (
+                  <div className="p-3 space-y-2">
+
+                    {/* Prediction */}
+                    {aiResult.prediction && (
+                      <div className="rounded p-2.5" style={{ background: 'rgba(188,140,255,0.06)', border: '1px solid rgba(188,140,255,0.15)' }}>
+                        <div className="flex items-center gap-1 mb-1">
+                          <Zap size={8} style={{ color: '#bc8cff' }} />
+                          <span className="text-[7px] font-black tracking-[0.2em]" style={{ color: '#bc8cff' }}>MARKET PREDICTION</span>
+                        </div>
+                        <p className="text-[10px] leading-relaxed" style={{ color: '#e6edf3' }}>{aiResult.prediction}</p>
+                      </div>
+                    )}
+
+                    {/* Mood */}
+                    {aiResult.mood && (
+                      <div className="rounded p-2.5" style={{ background: '#1c2128', border: '1px solid #30363d' }}>
+                        <div className="text-[7px] font-black tracking-[0.2em] mb-1" style={{ color: '#6e7681' }}>MARKET MOOD</div>
+                        <p className="text-[10px] leading-relaxed" style={{ color: '#b1bac4' }}>{aiResult.mood}</p>
+                      </div>
+                    )}
+
+                    {/* Sectors */}
+                    {aiResult.sectors.length > 0 && (
+                      <div className="rounded p-2.5" style={{ background: 'rgba(88,166,255,0.05)', border: '1px solid rgba(88,166,255,0.15)' }}>
+                        <div className="flex items-center gap-1 mb-2">
+                          <Eye size={8} style={{ color: '#58a6ff' }} />
+                          <span className="text-[7px] font-black tracking-[0.2em]" style={{ color: '#58a6ff' }}>SECTORS TO WATCH</span>
+                        </div>
+                        <div className="space-y-2">
+                          {aiResult.sectors.map((s, i) => (
+                            <div key={i} className="border-l-2 pl-2 cursor-pointer hover:opacity-80 transition-opacity"
+                              style={{ borderColor: i === 0 ? '#58a6ff' : '#21262d' }}
+                              onClick={() => {
+                                const found = sectors.find(sec => sec.name.toLowerCase().includes(s.name.toLowerCase()) || s.name.toLowerCase().includes(sec.shortName.toLowerCase()));
+                                if (found) loadSectorStocks(found);
+                              }}
+                            >
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <div className="text-[9px] font-black" style={{ color: '#58a6ff' }}>{s.name}</div>
+                                {i === 0 && <span className="text-[6px] font-black px-1 py-px rounded" style={{ background: 'rgba(88,166,255,0.15)', color: '#79c0ff' }}>TOP PICK</span>}
+                              </div>
+                              <p className="text-[9px] leading-snug" style={{ color: '#8b949e' }}>{s.reason}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Top stock */}
+                    {aiResult.topStock && (
+                      <div className="rounded p-2.5 cursor-pointer transition-all"
+                        style={{ background: 'rgba(63,185,80,0.06)', border: '1px solid rgba(63,185,80,0.2)' }}
+                        onClick={() => aiResult.topStock && onSelect(aiResult.topStock.ticker)}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-1">
+                            <TrendingUp size={8} style={{ color: '#3fb950' }} />
+                            <span className="text-[7px] font-black tracking-[0.2em]" style={{ color: '#3fb950' }}>TOP STOCK OPPORTUNITY</span>
+                          </div>
+                          <span className="text-[7px] font-black px-1.5 py-0.5 rounded"
+                            style={{ background: 'rgba(63,185,80,0.12)', color: '#56d364', border: '1px solid rgba(63,185,80,0.25)' }}>ANALYZE →</span>
+                        </div>
+                        <div className="text-[18px] font-black leading-none mb-0.5" style={{ color: '#56d364' }}>{aiResult.topStock.ticker}</div>
+                        <p className="text-[9px] leading-snug" style={{ color: '#8b949e' }}>{aiResult.topStock.reason}</p>
+                      </div>
+                    )}
+
+                    {/* Risk */}
+                    {aiResult.risk && (
+                      <div className="rounded flex items-start gap-2 p-2.5"
+                        style={{ background: 'rgba(248,81,73,0.06)', border: '1px solid rgba(248,81,73,0.15)' }}>
+                        <AlertTriangle size={9} style={{ color: '#f85149', flexShrink: 0, marginTop: 1 }} />
+                        <div>
+                          <div className="text-[7px] font-black tracking-[0.2em] mb-0.5" style={{ color: '#f85149' }}>RISK ALERT</div>
+                          <p className="text-[9px] leading-snug" style={{ color: '#8b949e' }}>{aiResult.risk}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            )}
+
+            {/* Empty state when no news yet */}
+            {news.length === 0 && !aiResult && !aiLoading && (
+              <div className="flex flex-col items-center justify-center h-full gap-3 p-6">
+                <Activity size={24} style={{ color: '#21262d' }} />
+                <p className="text-[9px] text-center leading-relaxed" style={{ color: '#484f58' }}>
+                  Loading market news...<br />AI brief loads automatically.
+                </p>
               </div>
             )}
           </div>

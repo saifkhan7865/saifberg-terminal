@@ -98,7 +98,7 @@ export default function PeersPanel({ symbol, onSelectTicker }: { symbol: string;
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-1.5 border-b flex-shrink-0" style={{ borderColor: '#1a1a1a' }}>
+      <div className="flex items-center justify-between px-3 py-1.5 border-b flex-shrink-0" style={{ borderColor: '#21262d' }}>
         <span className="text-[10px] font-bold tracking-widest" style={{ color: '#34d399' }}>PEERS · {symbol} COMPARABLE COMPANIES</span>
       </div>
 
@@ -120,7 +120,7 @@ export default function PeersPanel({ symbol, onSelectTicker }: { symbol: string;
           </div>
         ) : (
           <div>
-            <div className="grid grid-cols-4 gap-0 px-3 py-1 text-[9px] font-bold tracking-widest" style={{ color: '#374151', borderBottom: '1px solid #0d0d0d' }}>
+            <div className="grid grid-cols-4 gap-0 px-3 py-1 text-[9px] font-bold tracking-widest" style={{ color: '#374151', borderBottom: '1px solid #1c2128' }}>
               <span>SYMBOL</span>
               <span className="text-right">PRICE</span>
               <span className="text-right">CHG%</span>
@@ -132,8 +132,8 @@ export default function PeersPanel({ symbol, onSelectTicker }: { symbol: string;
               return (
                 <div
                   key={peer.symbol}
-                  className="grid grid-cols-4 gap-0 px-3 py-2 hover:bg-[#0d0d0d] cursor-pointer border-b transition-colors"
-                  style={{ borderColor: '#0d0d0d' }}
+                  className="grid grid-cols-4 gap-0 px-3 py-2 hover:bg-[#1c2128] cursor-pointer border-b transition-colors"
+                  style={{ borderColor: '#1c2128' }}
                   onClick={() => onSelectTicker(peer.symbol)}
                 >
                   <div>
@@ -163,7 +163,7 @@ export default function PeersPanel({ symbol, onSelectTicker }: { symbol: string;
         )}
       </div>
 
-      <div className="px-3 py-1 border-t flex items-center gap-1 flex-shrink-0" style={{ borderColor: '#1a1a1a' }}>
+      <div className="px-3 py-1 border-t flex items-center gap-1 flex-shrink-0" style={{ borderColor: '#21262d' }}>
         <ExternalLink size={9} style={{ color: '#374151' }} />
         <span className="text-[9px]" style={{ color: '#374151' }}>Click to select a peer as active ticker</span>
       </div>

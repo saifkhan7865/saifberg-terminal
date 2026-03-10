@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BarChart2, Settings } from 'lucide-react';
+import { Activity, Settings } from 'lucide-react';
 import SearchBar from './SearchBar';
 import SettingsModal from './SettingsModal';
 
@@ -31,49 +31,53 @@ export default function TerminalHeader({ currentSymbol, onSelect, onHome }: Prop
 
   return (
     <div
-      className="flex items-center gap-3 px-3 h-12 flex-shrink-0 border-b"
+      className="relative flex items-center gap-3 px-4 h-14 flex-shrink-0 border-b"
       style={{
-        background: '#030303',
-        borderColor: '#1a1a1a',
-        boxShadow: '0 1px 0 #0d0d0d',
+        background: '#161b22',
+        borderColor: '#21262d',
+        boxShadow: '0 1px 8px rgba(0,0,0,0.4)',
       }}
     >
-      {/* Logo — click to go home */}
+      {/* Thin amber accent line at very top */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{ background: 'linear-gradient(90deg, transparent 0%, #e2c97e30 30%, #f5a62350 50%, #e2c97e30 70%, transparent 100%)' }}
+      />
+
+      {/* Logo */}
       <button
         onClick={onHome}
         className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity"
         title="Home"
       >
-        <BarChart2 size={16} style={{ color: '#f5a623' }} />
+        <Activity size={18} style={{ color: '#f5a623', filter: 'drop-shadow(0 0 6px rgba(245,166,35,0.6))' }} />
         <div className="text-left">
-          <div
-            className="text-[13px] font-black tracking-[0.2em] leading-none"
-            style={{ color: '#f5a623', textShadow: '0 0 12px rgba(245,166,35,0.4)' }}
-          >
+          <div className="text-[15px] font-black tracking-[0.18em] leading-none gradient-text-amber">
             SAIFBERG
           </div>
-          <div className="text-[7px] font-bold tracking-[0.3em]" style={{ color: currentSymbol ? '#4b5563' : '#f5a623' }}>
+          <div className="text-[8px] font-bold tracking-[0.3em]" style={{ color: currentSymbol ? '#6e7681' : '#f5a62370' }}>
             {currentSymbol ? 'TERMINAL' : '● HOME'}
           </div>
         </div>
       </button>
 
       {/* Divider */}
-      <div className="w-px h-6 flex-shrink-0" style={{ background: '#1a1a1a' }} />
+      <div className="w-px h-5 flex-shrink-0" style={{ background: '#21262d' }} />
 
       {/* Search */}
       <SearchBar onSelect={onSelect} currentSymbol={currentSymbol} />
 
       {/* Quick tickers */}
-      <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
+      <div className="hidden lg:flex items-center gap-0.5 flex-shrink-0">
         {POPULAR.map((t) => (
           <button
             key={t}
             onClick={() => onSelect(t)}
-            className="px-1.5 py-0.5 text-[9px] font-bold rounded transition-all hover:bg-[#1a1a1a]"
+            className="px-2 py-1 text-[10px] font-bold rounded transition-all"
             style={{
-              color: t === currentSymbol ? '#f5a623' : '#374151',
-              border: `1px solid ${t === currentSymbol ? '#2a2a2a' : 'transparent'}`,
+              color: t === currentSymbol ? '#f5a623' : '#8b949e',
+              background: t === currentSymbol ? 'rgba(245,166,35,0.1)' : 'transparent',
+              border: `1px solid ${t === currentSymbol ? 'rgba(245,166,35,0.3)' : 'transparent'}`,
             }}
           >
             {t}
@@ -81,27 +85,32 @@ export default function TerminalHeader({ currentSymbol, onSelect, onHome }: Prop
         ))}
       </div>
 
+      <div className="flex-1" />
+
       {/* Divider */}
-      <div className="w-px h-6 flex-shrink-0 ml-auto" style={{ background: '#1a1a1a' }} />
+      <div className="w-px h-5 flex-shrink-0" style={{ background: '#21262d' }} />
 
       {/* Settings */}
       <button
         onClick={() => setShowSettings(true)}
-        className="flex-shrink-0 p-1.5 rounded hover:bg-[#1a1a1a] transition-colors"
+        className="flex-shrink-0 p-1.5 rounded transition-colors"
+        style={{ color: '#6e7681' }}
+        onMouseEnter={e => (e.currentTarget.style.color = '#e6edf3')}
+        onMouseLeave={e => (e.currentTarget.style.color = '#6e7681')}
         title="API Settings"
       >
-        <Settings size={13} style={{ color: '#4b5563' }} />
+        <Settings size={13} />
       </button>
 
       {/* Divider */}
-      <div className="w-px h-6 flex-shrink-0" style={{ background: '#1a1a1a' }} />
+      <div className="w-px h-5 flex-shrink-0" style={{ background: '#21262d' }} />
 
       {/* Clock */}
       <div className="flex-shrink-0 text-right">
-        <div className="text-[13px] font-bold font-mono tracking-widest" style={{ color: '#e2c97e' }}>
-          {time}<span className="blink">_</span>
+        <div className="text-[15px] font-bold font-mono tracking-widest" style={{ color: '#e6edf3' }}>
+          {time}<span className="blink" style={{ color: '#f5a623' }}>_</span>
         </div>
-        <div className="text-[9px] font-mono" style={{ color: '#4b5563' }}>
+        <div className="text-[10px] font-mono" style={{ color: '#6e7681' }}>
           {date} EST
         </div>
       </div>

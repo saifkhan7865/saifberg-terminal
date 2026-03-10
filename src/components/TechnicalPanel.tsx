@@ -23,7 +23,7 @@ function InfoTip({ lines }: { lines: string[] }) {
       </button>
       {show && (
         <div className="absolute left-0 top-5 z-50 w-72 rounded border p-3 shadow-xl"
-          style={{ background: '#0d0d0d', borderColor: '#222' }}>
+          style={{ background: '#1c2128', borderColor: '#222' }}>
           {lines.map((l, i) => (
             <p key={i} className={`text-[9px] leading-relaxed ${i > 0 ? 'mt-1.5' : ''}`}
               style={{ color: i === 0 ? '#c9b97a' : '#6b7280' }}>
@@ -161,7 +161,7 @@ export default function TechnicalPanel({ symbol }: Props) {
   const rsiBarPct = rsi != null ? Math.min(Math.max(rsi, 0), 100) : 50;
 
   return (
-    <div className="h-full overflow-y-auto p-4 space-y-4" style={{ background: '#000' }}>
+    <div className="h-full overflow-y-auto p-4 space-y-4" style={{ background: '#0d1117' }}>
 
       {/* Signal pills row */}
       <div className="flex flex-wrap gap-2">
@@ -219,7 +219,7 @@ export default function TechnicalPanel({ symbol }: Props) {
           <div className="relative h-4 rounded-full overflow-hidden" style={{ background: '#0a0a0a' }}>
             {/* Zones */}
             <div className="absolute inset-y-0 left-0 rounded-l-full" style={{ width: '30%', background: '#052e16' }} />
-            <div className="absolute inset-y-0" style={{ left: '30%', width: '40%', background: '#111' }} />
+            <div className="absolute inset-y-0" style={{ left: '30%', width: '40%', background: '#1c2128' }} />
             <div className="absolute inset-y-0 right-0 rounded-r-full" style={{ width: '30%', background: '#1f0505' }} />
             {/* Zone labels */}
             <div className="absolute inset-y-0 left-1 flex items-center">
@@ -261,7 +261,7 @@ export default function TechnicalPanel({ symbol }: Props) {
                 <ReferenceLine y={30} stroke="#22c55e50" strokeDasharray="3 2" />
                 <ReferenceLine y={50} stroke="#37415130" strokeDasharray="2 3" />
                 <Tooltip
-                  contentStyle={{ background: '#0d0d0d', border: '1px solid #222', borderRadius: 4, fontSize: 9 }}
+                  contentStyle={{ background: '#1c2128', border: '1px solid #222', borderRadius: 4, fontSize: 9 }}
                   labelStyle={{ color: '#4b5563', fontSize: 8 }}
                   itemStyle={{ color: rsiZoneColor }}
                   formatter={(v: number | undefined) => [v?.toFixed(1) ?? '—', 'RSI']}
@@ -350,7 +350,7 @@ export default function TechnicalPanel({ symbol }: Props) {
                 <YAxis hide />
                 <ReferenceLine y={0} stroke="#37415160" />
                 <Tooltip
-                  contentStyle={{ background: '#0d0d0d', border: '1px solid #222', borderRadius: 4, fontSize: 9 }}
+                  contentStyle={{ background: '#1c2128', border: '1px solid #222', borderRadius: 4, fontSize: 9 }}
                   labelStyle={{ color: '#4b5563', fontSize: 8 }}
                   labelFormatter={(label: unknown) => typeof label === 'string' ? label.slice(0, 10) : ''}
                   formatter={(v: number | undefined, name: string | undefined) => [v?.toFixed(4) ?? '—', name ?? '']}

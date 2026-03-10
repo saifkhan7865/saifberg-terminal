@@ -76,7 +76,7 @@ export default function SearchBar({ onSelect, currentSymbol }: Props) {
     <div className="relative flex-1 max-w-md" style={{ zIndex: 9999 }}>
       <div
         className="flex items-center gap-2 px-3 h-8 border"
-        style={{ background: '#0d0d0d', borderColor: open ? '#e2c97e' : '#2a2a2a' }}
+        style={{ background: '#1c2128', borderColor: open ? '#e2c97e' : '#30363d' }}
       >
         <Search size={12} style={{ color: '#6b7280' }} />
         <input
@@ -101,7 +101,7 @@ export default function SearchBar({ onSelect, currentSymbol }: Props) {
       {open && (results.length > 0 || loading) && (
         <div
           className="absolute top-full left-0 right-0 border-l border-r border-b overflow-hidden"
-          style={{ background: '#080808', borderColor: '#2a2a2a' }}
+          style={{ background: '#161b22', borderColor: '#30363d' }}
         >
           {loading && (
             <div className="px-3 py-2 text-xs" style={{ color: '#6b7280' }}>
@@ -114,7 +114,7 @@ export default function SearchBar({ onSelect, currentSymbol }: Props) {
               onMouseDown={() => handleSelect(r.symbol)}
               className="flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors"
               style={{
-                background: i === highlighted ? '#1a1a1a' : 'transparent',
+                background: i === highlighted ? '#21262d' : 'transparent',
                 borderBottom: '1px solid #111',
               }}
             >

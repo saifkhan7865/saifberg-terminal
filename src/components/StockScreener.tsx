@@ -86,7 +86,7 @@ export default function StockScreener({ onSelect }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden" style={{ background: '#000' }}>
+    <div className="flex flex-col h-full overflow-hidden" style={{ background: '#0d1117' }}>
 
       {/* Filter bar */}
       <div className="flex items-center gap-3 px-4 py-2.5 border-b flex-shrink-0"
@@ -137,7 +137,7 @@ export default function StockScreener({ onSelect }: Props) {
           <div className="flex flex-col items-center justify-center h-full gap-3">
             <div className="text-[32px]" style={{ color: '#111' }}>⊙</div>
             <div className="text-center">
-              <div className="text-[11px] font-black mb-1" style={{ color: '#2a2a2a' }}>STOCK SCREENER</div>
+              <div className="text-[11px] font-black mb-1" style={{ color: '#30363d' }}>STOCK SCREENER</div>
               <p className="text-[9px]" style={{ color: '#1f2937' }}>Select a sector and click SCAN to screen stocks</p>
             </div>
           </div>

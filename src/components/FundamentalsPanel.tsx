@@ -45,8 +45,8 @@ function DataRow({
   };
   return (
     <div
-      className="flex items-center justify-between py-0.5 px-1 hover:bg-[#111] rounded"
-      style={{ borderBottom: '1px solid #0d0d0d' }}
+      className="flex items-center justify-between py-0.5 px-1 hover:bg-[#1c2128] rounded"
+      style={{ borderBottom: '1px solid #1c2128' }}
     >
       <span className="text-[10px]" style={{ color: '#6b7280' }}>{label}</span>
       <div className="text-right">
@@ -107,7 +107,7 @@ function SignalBadge({ signal }: { signal: SignalResult }) {
       </div>
 
       {/* Score bar */}
-      <div className="h-1 rounded-full mb-2" style={{ background: '#1a1a1a' }}>
+      <div className="h-1 rounded-full mb-2" style={{ background: '#21262d' }}>
         <div
           className="h-full rounded-full transition-all"
           style={{ width: `${barWidth}%`, background: barColor }}
@@ -270,7 +270,7 @@ export default function FundamentalsPanel({ fundamentals: f, quote: q, signal, l
           <span className="text-[10px] font-bold" style={{ color: '#e2c97e' }}>${fmt(curPrice ?? null, 2)}</span>
           <span className="text-[10px]" style={{ color: '#6b7280' }}>${fmt(wkHigh ?? null, 2)}</span>
         </div>
-        <div className="h-1.5 rounded-full relative" style={{ background: '#1a1a1a' }}>
+        <div className="h-1.5 rounded-full relative" style={{ background: '#21262d' }}>
           {wkPosition != null && (
             <>
               <div

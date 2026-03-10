@@ -51,18 +51,18 @@ export default function DividendsPanel({ symbol }: Props) {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-1.5 border-b flex-shrink-0" style={{ borderColor: '#1a1a1a' }}>
+      <div className="flex items-center justify-between px-3 py-1.5 border-b flex-shrink-0" style={{ borderColor: '#21262d' }}>
         <div className="flex items-center gap-2">
           <DollarSign size={11} style={{ color: '#4ade80' }} />
           <span className="text-[10px] font-bold tracking-widest" style={{ color: '#4ade80' }}>DVD · DIVIDENDS — {symbol}</span>
         </div>
-        <button onClick={fetchDividends} className="p-0.5 rounded hover:bg-[#1a1a1a]">
+        <button onClick={fetchDividends} className="p-0.5 rounded hover:bg-[#21262d]">
           <RefreshCw size={9} style={{ color: loading ? '#4ade80' : '#4b5563' }} />
         </button>
       </div>
 
       {!loading && !error && dividends.length > 0 && (
-        <div className="flex gap-4 px-3 py-2 border-b flex-shrink-0" style={{ borderColor: '#0d0d0d' }}>
+        <div className="flex gap-4 px-3 py-2 border-b flex-shrink-0" style={{ borderColor: '#1c2128' }}>
           <div>
             <div className="text-[8px] font-bold tracking-widest" style={{ color: '#374151' }}>MOST RECENT</div>
             <div className="text-[14px] font-bold font-mono" style={{ color: '#4ade80' }}>
@@ -104,11 +104,11 @@ export default function DividendsPanel({ symbol }: Props) {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-4 gap-0 px-3 py-1 text-[8px] font-bold tracking-widest border-b" style={{ color: '#374151', borderColor: '#0d0d0d' }}>
+            <div className="grid grid-cols-4 gap-0 px-3 py-1 text-[8px] font-bold tracking-widest border-b" style={{ color: '#374151', borderColor: '#1c2128' }}>
               <span>EX-DATE</span><span className="text-right">AMOUNT</span><span className="text-right">PAY DATE</span><span className="text-right">REC DATE</span>
             </div>
             {dividends.slice(0, 50).map((d, i) => (
-              <div key={i} className="grid grid-cols-4 gap-0 px-3 py-1.5 border-b hover:bg-[#0d0d0d] transition-colors" style={{ borderColor: '#080808' }}>
+              <div key={i} className="grid grid-cols-4 gap-0 px-3 py-1.5 border-b hover:bg-[#1c2128] transition-colors" style={{ borderColor: '#161b22' }}>
                 <span className="text-[10px] font-mono" style={{ color: '#e2c97e' }}>{fmtDate(d.date)}</span>
                 <span className="text-[10px] font-mono font-bold text-right" style={{ color: '#4ade80' }}>
                   ${d.dividend.toFixed(4)}

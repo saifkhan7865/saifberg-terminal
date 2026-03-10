@@ -86,7 +86,7 @@ function getVerdictStyle(rating: string) {
   for (const key of Object.keys(VERDICT_STYLE)) {
     if (rating.toUpperCase().includes(key)) return VERDICT_STYLE[key];
   }
-  return { bg: '#111', border: '#2a2a2a', color: '#9ca3af', icon: '?' };
+  return { bg: '#111', border: '#30363d', color: '#9ca3af', icon: '?' };
 }
 
 // ─── Sentiment gauge ─────────────────────────────────────────────────────────
@@ -106,7 +106,7 @@ function SentimentGauge({ rating }: { rating: string }) {
       <div className="flex justify-between text-[8px] font-bold tracking-widest mb-1" style={{ color: '#374151' }}>
         <span>BEARISH</span><span>NEUTRAL</span><span>BULLISH</span>
       </div>
-      <div className="relative h-2 rounded-full overflow-hidden" style={{ background: '#111' }}>
+      <div className="relative h-2 rounded-full overflow-hidden" style={{ background: '#1c2128' }}>
         {/* gradient track */}
         <div className="absolute inset-0 rounded-full" style={{
           background: 'linear-gradient(to right, #ef4444 0%, #fbbf24 50%, #22c55e 100%)',
@@ -171,14 +171,14 @@ export default function AIAnalysis({ symbol }: Props) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-1.5 border-b flex-shrink-0" style={{ borderColor: '#1a1a1a' }}>
+      <div className="flex items-center justify-between px-3 py-1.5 border-b flex-shrink-0" style={{ borderColor: '#21262d' }}>
         <div className="flex items-center gap-1.5">
           <Brain size={11} style={{ color: '#a78bfa' }} />
           <span className="text-[10px] font-bold tracking-widest" style={{ color: '#a78bfa' }}>AI · GEMINI ANALYSIS — {symbol}</span>
         </div>
         <button onClick={run} disabled={loading}
           className="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold tracking-widest transition-all disabled:opacity-50"
-          style={{ background: loading ? '#1a1a1a' : '#1e1033', border: '1px solid #4c1d95', color: '#a78bfa' }}
+          style={{ background: loading ? '#21262d' : '#1e1033', border: '1px solid #4c1d95', color: '#a78bfa' }}
         >
           <RefreshCw size={9} className={loading ? 'animate-spin' : ''} />
           {loading ? 'ANALYZING...' : hasRun ? 'REFRESH' : 'RUN'}
@@ -281,7 +281,7 @@ export default function AIAnalysis({ symbol }: Props) {
 
               {/* Executive summary */}
               {parsed.summary && (
-                <div className="rounded p-2.5" style={{ background: '#080808', border: '1px solid #111' }}>
+                <div className="rounded p-2.5" style={{ background: '#161b22', border: '1px solid #111' }}>
                   <div className="text-[8px] font-black tracking-widest mb-1.5" style={{ color: '#6b7280' }}>EXECUTIVE SUMMARY</div>
                   <p className="text-[11px] leading-relaxed" style={{ color: '#c9b97a' }}>{parsed.summary}</p>
                 </div>
@@ -342,7 +342,7 @@ export default function AIAnalysis({ symbol }: Props) {
 
               {/* Technical */}
               {parsed.technical && (
-                <div className="rounded p-2.5" style={{ background: '#0d0d0d', border: '1px solid #1a1a1a' }}>
+                <div className="rounded p-2.5" style={{ background: '#1c2128', border: '1px solid #1a1a1a' }}>
                   <div className="flex items-center gap-1 mb-1.5">
                     <Target size={10} style={{ color: '#f5a623' }} />
                     <span className="text-[8px] font-black tracking-widest" style={{ color: '#f5a623' }}>TECHNICAL PICTURE</span>

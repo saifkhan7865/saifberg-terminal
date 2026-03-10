@@ -55,7 +55,7 @@ export default function FilingsPanel({ symbol }: { symbol: string }) {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-1.5 border-b flex-shrink-0" style={{ borderColor: '#1a1a1a' }}>
+      <div className="flex items-center justify-between px-3 py-1.5 border-b flex-shrink-0" style={{ borderColor: '#21262d' }}>
         <div className="flex items-center gap-2">
           <FileText size={11} style={{ color: '#fb923c' }} />
           <span className="text-[10px] font-bold tracking-widest" style={{ color: '#fb923c' }}>FILINGS · {symbol} SEC DOCUMENTS</span>
@@ -85,8 +85,8 @@ export default function FilingsPanel({ symbol }: { symbol: string }) {
               href={filing.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 px-3 py-2.5 border-b hover:bg-[#0d0d0d] transition-colors group"
-              style={{ borderColor: '#0d0d0d', textDecoration: 'none' }}
+              className="flex items-center gap-3 px-3 py-2.5 border-b hover:bg-[#1c2128] transition-colors group"
+              style={{ borderColor: '#1c2128', textDecoration: 'none' }}
             >
               <div
                 className="flex-shrink-0 w-12 text-center py-0.5 rounded text-[9px] font-black"

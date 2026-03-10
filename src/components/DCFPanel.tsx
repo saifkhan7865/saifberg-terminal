@@ -76,7 +76,7 @@ export default function DCFPanel({ symbol }: Props) {
   const pricePct = range > 0 ? ((currentPrice - low) / range) * 100 : 50;
 
   return (
-    <div className="h-full overflow-y-auto p-5 space-y-4" style={{ background: '#000' }}>
+    <div className="h-full overflow-y-auto p-5 space-y-4" style={{ background: '#0d1117' }}>
 
       {/* Title */}
       <div className="text-[9px] font-black tracking-[0.2em]" style={{ color: '#4b5563' }}>

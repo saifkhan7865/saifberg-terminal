@@ -17,7 +17,7 @@ interface PeerQuote {
 }
 
 function getHeatStyle(pct: number | null): { bg: string; color: string; border: string } {
-  if (pct == null) return { bg: '#111', color: '#4b5563', border: '#1a1a1a' };
+  if (pct == null) return { bg: '#111', color: '#4b5563', border: '#21262d' };
   if (pct >= 2)   return { bg: '#052e16', color: '#4ade80', border: '#16a34a' };
   if (pct >= 0.5) return { bg: '#0a1f11', color: '#86efac', border: '#166534' };
   if (pct >= 0)   return { bg: '#0d1a0e', color: '#86efac', border: '#14532d' };
@@ -53,7 +53,7 @@ export default function PeersBar({ symbol, onSelectTicker }: Props) {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-1 border-b flex-shrink-0" style={{ borderColor: '#1a1a1a' }}>
+      <div className="flex items-center justify-between px-3 py-1 border-b flex-shrink-0" style={{ borderColor: '#21262d' }}>
         <span className="text-[9px] font-bold tracking-widest" style={{ color: '#6b7280' }}>
           PEER COMPARISON — {symbol}
         </span>
@@ -66,7 +66,7 @@ export default function PeersBar({ symbol, onSelectTicker }: Props) {
             </div>
             <span className="text-[8px]" style={{ color: '#374151' }}>-2% … +2%</span>
           </div>
-          <button onClick={fetchPeers} className="p-0.5 rounded hover:bg-[#1a1a1a]">
+          <button onClick={fetchPeers} className="p-0.5 rounded hover:bg-[#21262d]">
             <RefreshCw size={9} style={{ color: loading ? '#f5a623' : '#4b5563' }} className={loading ? 'animate-spin' : ''} />
           </button>
           {lastUpd && <span className="text-[8px] font-mono" style={{ color: '#1f2937' }}>UPD {lastUpd.toLocaleTimeString('en-US', { hour12: false })}</span>}

@@ -97,8 +97,8 @@ export default function MarketOverview({ onSelectTicker }: Props) {
       <div className="flex-shrink-0 px-2 pt-2 pb-1 border-b" style={{ borderColor: '#111' }}>
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-[9px] font-black tracking-[0.18em]" style={{ color: '#374151' }}>INDICES</span>
-          <button onClick={fetchAll} className="p-0.5 rounded hover:bg-[#111]">
-            <RefreshCw size={8} style={{ color: loading ? '#f5a623' : '#2a2a2a' }} />
+          <button onClick={fetchAll} className="p-0.5 rounded hover:bg-[#1c2128]">
+            <RefreshCw size={8} style={{ color: loading ? '#f5a623' : '#30363d' }} />
           </button>
         </div>
         <div className="grid grid-cols-2 gap-1">
@@ -109,7 +109,7 @@ export default function MarketOverview({ onSelectTicker }: Props) {
                 const c  = up ? '#22c55e' : '#ef4444';
                 return (
                   <div key={q.symbol} onClick={() => onSelectTicker(q.symbol)}
-                    className="rounded px-2 py-1.5 cursor-pointer hover:bg-[#111] transition-colors border"
+                    className="rounded px-2 py-1.5 cursor-pointer hover:bg-[#1c2128] transition-colors border"
                     style={{ borderColor: '#111', background: '#050505' }}
                   >
                     <div className="text-[8px] font-bold" style={{ color: '#4b5563' }}>{INDEX_LABELS[q.symbol]}</div>
@@ -138,7 +138,7 @@ export default function MarketOverview({ onSelectTicker }: Props) {
               className="flex-1 py-1.5 text-[8px] font-black tracking-widest transition-all"
               style={{
                 borderBottom: `2px solid ${active ? colors[t] : 'transparent'}`,
-                color: active ? colors[t] : '#2a2a2a',
+                color: active ? colors[t] : '#30363d',
                 background: active ? `${colors[t]}08` : 'transparent',
               }}
             >
@@ -165,8 +165,8 @@ export default function MarketOverview({ onSelectTicker }: Props) {
             const barW = Math.min(Math.abs(m.changePercent ?? 0) * 8, 100);
             return (
               <div key={m.symbol} onClick={() => onSelectTicker(m.symbol)}
-                className="relative px-2 py-2 cursor-pointer hover:bg-[#0d0d0d] transition-colors border-b overflow-hidden"
-                style={{ borderColor: '#080808' }}
+                className="relative px-2 py-2 cursor-pointer hover:bg-[#1c2128] transition-colors border-b overflow-hidden"
+                style={{ borderColor: '#161b22' }}
               >
                 <div className="absolute inset-y-0 left-0 opacity-[0.05]"
                   style={{ width: `${barW}%`, background: c }} />

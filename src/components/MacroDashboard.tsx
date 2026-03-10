@@ -84,9 +84,9 @@ function InfoTooltip({ content, upMeans, downMeans, target }: {
       </button>
       {show && (
         <div className="absolute left-0 top-5 z-50 w-64 rounded border p-3 shadow-xl"
-          style={{ background: '#0d0d0d', borderColor: '#222', minWidth: 240 }}>
+          style={{ background: '#1c2128', borderColor: '#222', minWidth: 240 }}>
           <p className="text-[9px] leading-relaxed mb-2" style={{ color: '#9ca3af' }}>{content}</p>
-          <div className="space-y-1 border-t pt-2" style={{ borderColor: '#1a1a1a' }}>
+          <div className="space-y-1 border-t pt-2" style={{ borderColor: '#21262d' }}>
             <p className="text-[8px] leading-snug" style={{ color: '#6b7280' }}>{upMeans}</p>
             <p className="text-[8px] leading-snug" style={{ color: '#6b7280' }}>{downMeans}</p>
             {target && <p className="text-[8px] font-bold mt-1" style={{ color: '#374151' }}>{target}</p>}
@@ -360,7 +360,7 @@ export default function MacroDashboard() {
   };
 
   return (
-    <div className="p-4 space-y-4 overflow-y-auto h-full" style={{ background: '#000' }}>
+    <div className="p-4 space-y-4 overflow-y-auto h-full" style={{ background: '#0d1117' }}>
       <div className="text-[9px] font-black tracking-[0.25em]" style={{ color: '#4b5563' }}>
         MACRO ECONOMIC DASHBOARD
       </div>
@@ -411,10 +411,10 @@ export default function MacroDashboard() {
           <div style={{ height: 200 }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={yieldCurveData} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
-                <XAxis dataKey="label" tick={{ fill: '#4b5563', fontSize: 9, fontFamily: 'monospace' }} axisLine={{ stroke: '#1a1a1a' }} tickLine={false} />
-                <YAxis domain={[yMin - 0.1, yMax + 0.1]} tick={{ fill: '#4b5563', fontSize: 9, fontFamily: 'monospace' }} axisLine={{ stroke: '#1a1a1a' }} tickLine={false} tickFormatter={(v: number) => `${v.toFixed(1)}%`} width={45} />
+                <XAxis dataKey="label" tick={{ fill: '#4b5563', fontSize: 9, fontFamily: 'monospace' }} axisLine={{ stroke: '#21262d' }} tickLine={false} />
+                <YAxis domain={[yMin - 0.1, yMax + 0.1]} tick={{ fill: '#4b5563', fontSize: 9, fontFamily: 'monospace' }} axisLine={{ stroke: '#21262d' }} tickLine={false} tickFormatter={(v: number) => `${v.toFixed(1)}%`} width={45} />
                 <RechartsTooltip
-                  contentStyle={{ background: '#0d0d0d', border: '1px solid #222', borderRadius: 4 }}
+                  contentStyle={{ background: '#1c2128', border: '1px solid #222', borderRadius: 4 }}
                   labelStyle={{ color: '#e2c97e', fontSize: 10, fontWeight: 700 }}
                   itemStyle={{ color: '#f5a623', fontSize: 10 }}
                   formatter={(v: number | undefined) => [`${v?.toFixed(2) ?? '—'}%`, 'Yield']}

@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   return (
     <div
       className="px-2 py-1 border text-[10px]"
-      style={{ background: '#0d0d0d', borderColor: '#2a2a2a', color: '#e2c97e' }}
+      style={{ background: '#1c2128', borderColor: '#2a2a2a', color: '#e2c97e' }}
     >
       <div style={{ color: '#6b7280' }}>{dateStr}</div>
       <div className="font-bold">${price?.toFixed(2)}</div>
@@ -95,9 +95,9 @@ export default function PriceChart({ symbol, previousClose }: Props) {
             onClick={() => setRange(r)}
             className="px-2 py-0.5 text-[10px] font-bold rounded transition-colors"
             style={{
-              background: range === r ? '#1a1a1a' : 'transparent',
-              color: range === r ? '#f5a623' : '#4b5563',
-              border: `1px solid ${range === r ? '#2a2a2a' : 'transparent'}`,
+              background: range === r ? 'rgba(245,166,35,0.12)' : 'transparent',
+              color: range === r ? '#f5a623' : '#6e7681',
+              border: `1px solid ${range === r ? 'rgba(245,166,35,0.35)' : 'transparent'}`,
             }}
           >
             {r.toUpperCase()}
@@ -109,32 +109,32 @@ export default function PriceChart({ symbol, previousClose }: Props) {
       <div style={{ height: 140 }}>
         {loading ? (
           <div className="h-full flex items-center justify-center">
-            <span className="text-[10px]" style={{ color: '#374151' }}>LOADING CHART...</span>
+            <span className="text-[10px]" style={{ color: '#6e7681' }}>LOADING CHART...</span>
           </div>
         ) : chartData.length === 0 ? (
           <div className="h-full flex items-center justify-center">
-            <span className="text-[10px]" style={{ color: '#374151' }}>NO DATA</span>
+            <span className="text-[10px]" style={{ color: '#6e7681' }}>NO DATA</span>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
               <defs>
                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={strokeColor} stopOpacity={0.25} />
-                  <stop offset="95%" stopColor={strokeColor} stopOpacity={0} />
+                  <stop offset="5%" stopColor={strokeColor} stopOpacity={0.35} />
+                  <stop offset="95%" stopColor={strokeColor} stopOpacity={0.02} />
                 </linearGradient>
               </defs>
               <XAxis
                 dataKey="date"
                 tickFormatter={fmtDate}
-                tick={{ fill: '#374151', fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
+                tick={{ fill: '#6e7681', fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
                 tickLine={false}
                 axisLine={false}
                 interval="preserveStartEnd"
               />
               <YAxis
                 domain={[minPrice, maxPrice]}
-                tick={{ fill: '#374151', fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
+                tick={{ fill: '#6e7681', fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
                 tickFormatter={(v) => `$${v.toFixed(0)}`}
                 tickLine={false}
                 axisLine={false}
@@ -145,7 +145,7 @@ export default function PriceChart({ symbol, previousClose }: Props) {
               {previousClose && (
                 <ReferenceLine
                   y={previousClose}
-                  stroke="#374151"
+                  stroke="#30363d"
                   strokeDasharray="3 3"
                   strokeWidth={1}
                 />
@@ -154,7 +154,7 @@ export default function PriceChart({ symbol, previousClose }: Props) {
                 type="monotone"
                 dataKey="price"
                 stroke={strokeColor}
-                strokeWidth={1.5}
+                strokeWidth={2}
                 fill={`url(#${gradientId})`}
                 dot={false}
                 activeDot={{ r: 3, fill: strokeColor, strokeWidth: 0 }}

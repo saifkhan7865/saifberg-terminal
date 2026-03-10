@@ -10,31 +10,27 @@ import FundamentalsPanel from './FundamentalsPanel';
 import AIAnalysis from './AIAnalysis';
 import CompanyNewsPanel from './CompanyNewsPanel';
 import PeersPanel from './PeersPanel';
-import FilingsPanel from './FilingsPanel';
 import EarningsPanel from './EarningsPanel';
 import DividendsPanel from './DividendsPanel';
-import IPOPanel from './IPOPanel';
 import TechnicalPanel from './TechnicalPanel';
 import DCFPanel from './DCFPanel';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Cmd = 'GP' | 'FA' | 'AI' | 'CN' | 'PEERS' | 'FILINGS' | 'ERN' | 'DVD' | 'IPO' | 'TA' | 'DCF';
+type Cmd = 'GP' | 'FA' | 'AI' | 'CN' | 'PEERS' | 'ERN' | 'DVD' | 'TA' | 'DCF';
 
-interface CmdDef { label: string; desc: string; color: string; }
+interface CmdDef { label: string; code: string; color: string; }
 
 const COMMANDS: Record<Cmd, CmdDef> = {
-  GP:      { label: 'GP',      desc: 'Graph Price',        color: '#f5a623' },
-  FA:      { label: 'FA',      desc: 'Fundamentals',       color: '#e2c97e' },
-  AI:      { label: 'AI',      desc: 'Gemini Analysis',    color: '#a78bfa' },
-  CN:      { label: 'CN',      desc: 'Company News',       color: '#38bdf8' },
-  PEERS:   { label: 'PEERS',   desc: 'Company Peers',      color: '#34d399' },
-  FILINGS: { label: 'FILINGS', desc: 'SEC Filings',        color: '#fb923c' },
-  ERN:     { label: 'ERN',     desc: 'Earnings Calendar',  color: '#fbbf24' },
-  DVD:     { label: 'DVD',     desc: 'Dividends',          color: '#4ade80' },
-  IPO:     { label: 'IPO',     desc: 'IPO Calendar',       color: '#f472b6' },
-  TA:      { label: 'TA',      desc: 'Technical Analysis', color: '#22c55e' },
-  DCF:     { label: 'DCF',     desc: 'Valuation Model',    color: '#38bdf8' },
+  GP:    { code: 'GP',    label: 'Chart',        color: '#f5a623' },
+  FA:    { code: 'FA',    label: 'Fundamentals', color: '#e2c97e' },
+  AI:    { code: 'AI',    label: 'AI Analysis',  color: '#a78bfa' },
+  CN:    { code: 'CN',    label: 'News',         color: '#38bdf8' },
+  PEERS: { code: 'PEERS', label: 'Peers',        color: '#34d399' },
+  ERN:   { code: 'ERN',   label: 'Earnings',     color: '#fbbf24' },
+  DVD:   { code: 'DVD',   label: 'Dividends',    color: '#4ade80' },
+  TA:    { code: 'TA',    label: 'Technical',    color: '#22c55e' },
+  DCF:   { code: 'DCF',   label: 'Valuation',   color: '#38bdf8' },
 };
 
 const CMD_ALIASES: Record<string, Cmd> = {
@@ -43,10 +39,8 @@ const CMD_ALIASES: Record<string, Cmd> = {
   AI: 'AI', GEMINI: 'AI', PGFD: 'AI', ANALYZE: 'AI',
   CN: 'CN', NEWS: 'CN', CNEWS: 'CN',
   PEERS: 'PEERS', COMP: 'PEERS', PEER: 'PEERS',
-  FILINGS: 'FILINGS', SEC: 'FILINGS', FILING: 'FILINGS', CF: 'FILINGS',
   ERN: 'ERN', EARN: 'ERN', EARNINGS: 'ERN', ECAL: 'ERN',
   DVD: 'DVD', DIVS: 'DVD', DIVIDENDS: 'DVD', DIV: 'DVD',
-  IPO: 'IPO', IPOS: 'IPO',
   TA: 'TA', TECH: 'TA', TECHNICAL: 'TA', RSI: 'TA', MACD: 'TA',
   DCF: 'DCF', VALUATION: 'DCF', VAL: 'DCF', INTRINSIC: 'DCF',
 };
@@ -73,8 +67,8 @@ const fmtMCap = (v: number | null | undefined) => {
 function QuoteStat({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
     <div className="flex flex-col">
-      <span className="text-[9px]" style={{ color: '#4b5563' }}>{label}</span>
-      <span className="text-[11px] font-mono font-semibold" style={{ color: color || '#9ca3af' }}>{value}</span>
+      <span className="text-[9px] font-medium" style={{ color: '#6e7681' }}>{label}</span>
+      <span className="text-[11px] font-mono font-bold" style={{ color: color || '#e6edf3' }}>{value}</span>
     </div>
   );
 }
@@ -117,36 +111,35 @@ function CommandBar({ symbol, activeCmd, onExecute }: {
   const activeDef = COMMANDS[activeCmd];
 
   return (
-    <div className="flex-shrink-0 border-b" style={{ borderColor: '#1a1a1a', background: '#030303' }}>
-      {/* Active command line */}
-      <div className="flex items-center gap-2 px-3 h-7 border-b" style={{ borderColor: '#0d0d0d' }}>
-        <span className="text-[9px] font-mono" style={{ color: '#2a2a2a' }}>{symbol} US Equity</span>
-        <ChevronRight size={9} style={{ color: '#1f2937' }} />
-        <span className="text-[10px] font-black tracking-widest" style={{ color: activeDef.color }}>{activeDef.label}</span>
-        <span className="text-[9px]" style={{ color: '#374151' }}>{activeDef.desc}</span>
+    <div className="flex-shrink-0 border-b" style={{ borderColor: '#21262d', background: '#161b22' }}>
+      {/* Breadcrumb + command input */}
+      <div className="flex items-center gap-2 px-4 h-8 border-b" style={{ borderColor: '#21262d' }}>
+        <span className="text-[10px] font-mono font-bold" style={{ color: '#6e7681' }}>{symbol}</span>
+        <ChevronRight size={10} style={{ color: '#484f58' }} />
+        <span className="text-[11px] font-black tracking-wide" style={{ color: activeDef.color }}>{activeDef.label}</span>
         <div className="flex-1" />
         {/* Command input */}
-        <div className="relative flex items-center gap-1">
+        <div className="relative flex items-center gap-1.5 px-2 py-0.5 rounded" style={{ background: '#0d1117', border: '1px solid #30363d' }}>
           <span className="text-[10px] font-bold font-mono" style={{ color: '#f5a623' }}>{'>'}</span>
           <input
             ref={inputRef}
             value={input}
             onChange={(e) => handleChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="cmd…"
-            className="bg-transparent outline-none text-[11px] font-mono w-20"
-            style={{ color: '#f5a623', caretColor: '#f5a623' }}
+            placeholder="type command…"
+            className="bg-transparent outline-none text-[10px] font-mono w-24"
+            style={{ color: '#e6edf3', caretColor: '#f5a623' }}
           />
           {suggestions.length > 0 && (
-            <div className="absolute top-full right-0 mt-1 border rounded z-20 overflow-hidden" style={{ background: '#0d0d0d', borderColor: '#2a2a2a', minWidth: 180 }}>
+            <div className="absolute top-full right-0 mt-1 border rounded z-20 overflow-hidden" style={{ background: '#1c2128', borderColor: '#30363d', minWidth: 200 }}>
               {suggestions.map((cmd) => (
                 <button
                   key={cmd}
                   onClick={() => { onExecute(cmd); setInput(''); setSuggestions([]); }}
-                  className="w-full flex items-center gap-2 px-2 py-1 hover:bg-[#1a1a1a] transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-3 py-1.5 hover:bg-[#21262d] transition-colors text-left"
                 >
-                  <span className="text-[10px] font-black w-14" style={{ color: COMMANDS[cmd].color }}>{COMMANDS[cmd].label}</span>
-                  <span className="text-[9px]" style={{ color: '#6b7280' }}>{COMMANDS[cmd].desc}</span>
+                  <span className="text-[9px] font-black font-mono w-10" style={{ color: '#484f58' }}>{COMMANDS[cmd].code}</span>
+                  <span className="text-[11px] font-bold" style={{ color: COMMANDS[cmd].color }}>{COMMANDS[cmd].label}</span>
                 </button>
               ))}
             </div>
@@ -154,8 +147,8 @@ function CommandBar({ symbol, activeCmd, onExecute }: {
         </div>
       </div>
 
-      {/* Quick command buttons */}
-      <div className="flex items-center gap-0.5 px-2 py-1 overflow-x-auto scrollbar-none">
+      {/* Nav tabs */}
+      <div className="flex items-end gap-0 px-3 overflow-x-auto scrollbar-none" style={{ paddingTop: 6 }}>
         {(Object.keys(COMMANDS) as Cmd[]).map((cmd) => {
           const def = COMMANDS[cmd];
           const isActive = cmd === activeCmd;
@@ -163,14 +156,18 @@ function CommandBar({ symbol, activeCmd, onExecute }: {
             <button
               key={cmd}
               onClick={() => onExecute(cmd)}
-              className="flex-shrink-0 px-1.5 py-0.5 rounded transition-all text-[9px] font-black tracking-wider"
+              className="flex-shrink-0 flex flex-col items-center px-4 pb-2 pt-1 rounded-t transition-all"
               style={{
-                background: isActive ? `${def.color}18` : 'transparent',
-                border: `1px solid ${isActive ? def.color : '#1f2937'}`,
-                color: isActive ? def.color : '#374151',
+                borderBottom: `2px solid ${isActive ? def.color : 'transparent'}`,
+                background: isActive ? `${def.color}12` : 'transparent',
+                color: isActive ? def.color : '#8b949e',
+                minWidth: 64,
               }}
+              onMouseEnter={e => { if (!isActive) { e.currentTarget.style.color = '#e6edf3'; e.currentTarget.style.background = '#21262d'; } }}
+              onMouseLeave={e => { if (!isActive) { e.currentTarget.style.color = '#8b949e'; e.currentTarget.style.background = 'transparent'; } }}
             >
-              {def.label}
+              <span className="text-[8px] font-black tracking-widest opacity-60">{def.code}</span>
+              <span className="text-[11px] font-bold leading-tight">{def.label}</span>
             </button>
           );
         })}
@@ -251,7 +248,7 @@ export default function StockDetail({ symbol }: Props) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Quote Header */}
-      <div className="flex-shrink-0 px-3 py-2 border-b" style={{ borderColor: '#1a1a1a', background: '#050505' }}>
+      <div className="flex-shrink-0 px-4 py-3 border-b" style={{ borderColor: '#21262d', background: '#161b22' }}>
         {loadingQuote && !quote ? (
           <div className="space-y-1">
             <div className="h-5 w-48 rounded shimmer" />
@@ -264,7 +261,7 @@ export default function StockDetail({ symbol }: Props) {
                 <span className="text-lg font-black tracking-widest glow-amber" style={{ color: '#f5a623' }}>{symbol}</span>
                 <span className="text-[11px]" style={{ color: '#6b7280' }}>{quote.longName || quote.shortName || ''}</span>
                 {quote.exchange && (
-                  <span className="text-[9px] font-bold px-1 py-0.5 rounded" style={{ background: '#1a1a1a', color: '#4b5563', border: '1px solid #2a2a2a' }}>
+                  <span className="text-[9px] font-bold px-1 py-0.5 rounded" style={{ background: '#21262d', color: '#4b5563', border: '1px solid #2a2a2a' }}>
                     {quote.exchange}
                   </span>
                 )}
@@ -278,7 +275,7 @@ export default function StockDetail({ symbol }: Props) {
                     </span>
                   </div>
                 )}
-                <button onClick={() => { fetchQuote(); fetchFundamentals(); }} className="p-0.5 rounded hover:bg-[#1a1a1a]">
+                <button onClick={() => { fetchQuote(); fetchFundamentals(); }} className="p-0.5 rounded hover:bg-[#21262d]">
                   <RefreshCw size={10} style={{ color: loadingQuote ? '#f5a623' : '#4b5563' }} />
                 </button>
               </div>
@@ -308,7 +305,7 @@ export default function StockDetail({ symbol }: Props) {
               )}
             </div>
 
-            <div className="grid gap-x-4 gap-y-1 pt-1 border-t" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', borderColor: '#1a1a1a' }}>
+            <div className="grid gap-x-4 gap-y-1 pt-1 border-t" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', borderColor: '#21262d' }}>
               <QuoteStat label="OPEN"     value={`$${fmtPrice(quote.regularMarketOpen)}`} />
               <QuoteStat label="HIGH"     value={`$${fmtPrice(quote.regularMarketDayHigh)}`} color="#22c55e" />
               <QuoteStat label="LOW"      value={`$${fmtPrice(quote.regularMarketDayLow)}`}  color="#ef4444" />
@@ -323,8 +320,8 @@ export default function StockDetail({ symbol }: Props) {
 
             {lastUpdated && (
               <div className="flex items-center gap-1 mt-1">
-                <Wifi size={8} style={{ color: '#1f2937' }} />
-                <span className="text-[9px]" style={{ color: '#1f2937' }}>{lastUpdated.toLocaleTimeString('en-US', { hour12: false })}</span>
+                <Wifi size={8} style={{ color: '#484f58' }} />
+                <span className="text-[9px]" style={{ color: '#484f58' }}>{lastUpdated.toLocaleTimeString('en-US', { hour12: false })}</span>
               </div>
             )}
           </>
@@ -336,17 +333,15 @@ export default function StockDetail({ symbol }: Props) {
 
       {/* Panel */}
       <div className="flex-1 overflow-hidden">
-        {activeCmd === 'GP'      && <div className="h-full overflow-y-auto p-3"><PriceChart symbol={symbol} previousClose={quote?.regularMarketOpen ?? undefined} /></div>}
-        {activeCmd === 'FA'      && <FundamentalsPanel fundamentals={fundamentals} quote={quote} signal={signal} loading={loadingFund} />}
-        {activeCmd === 'AI'      && <AIAnalysis symbol={symbol} />}
-        {activeCmd === 'CN'      && <CompanyNewsPanel symbol={symbol} />}
-        {activeCmd === 'PEERS'   && <PeersPanel symbol={symbol} onSelectTicker={() => {}} />}
-        {activeCmd === 'FILINGS' && <FilingsPanel symbol={symbol} />}
-        {activeCmd === 'ERN'     && <EarningsPanel />}
-        {activeCmd === 'DVD'     && <DividendsPanel symbol={symbol} />}
-        {activeCmd === 'IPO'     && <IPOPanel />}
-        {activeCmd === 'TA'      && <TechnicalPanel symbol={symbol} />}
-        {activeCmd === 'DCF'     && <DCFPanel symbol={symbol} />}
+        {activeCmd === 'GP'    && <div className="h-full overflow-y-auto p-3"><PriceChart symbol={symbol} previousClose={quote?.regularMarketOpen ?? undefined} /></div>}
+        {activeCmd === 'FA'    && <FundamentalsPanel fundamentals={fundamentals} quote={quote} signal={signal} loading={loadingFund} />}
+        {activeCmd === 'AI'    && <AIAnalysis symbol={symbol} />}
+        {activeCmd === 'CN'    && <CompanyNewsPanel symbol={symbol} />}
+        {activeCmd === 'PEERS' && <PeersPanel symbol={symbol} onSelectTicker={() => {}} />}
+        {activeCmd === 'ERN'   && <EarningsPanel symbol={symbol} />}
+        {activeCmd === 'DVD'   && <DividendsPanel symbol={symbol} />}
+        {activeCmd === 'TA'    && <TechnicalPanel symbol={symbol} />}
+        {activeCmd === 'DCF'   && <DCFPanel symbol={symbol} />}
       </div>
     </div>
   );

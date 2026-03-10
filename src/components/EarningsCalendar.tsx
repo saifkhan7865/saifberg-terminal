@@ -86,7 +86,7 @@ export default function EarningsCalendar({ onSelect }: Props) {
   const scoreColor = (s: number) => s >= 8 ? '#22c55e' : s >= 6 ? '#f5a623' : '#9ca3af';
 
   return (
-    <div className="flex h-full overflow-hidden" style={{ background: '#000' }}>
+    <div className="flex h-full overflow-hidden" style={{ background: '#0d1117' }}>
 
       {/* Left: Earnings Table (60%) */}
       <div className="flex flex-col overflow-hidden border-r" style={{ width: '60%', borderColor: '#111' }}>
@@ -210,7 +210,7 @@ export default function EarningsCalendar({ onSelect }: Props) {
             <div className="flex flex-col items-center justify-center h-full gap-4 py-8">
               <Brain size={32} style={{ color: '#1e1033' }} />
               <div className="text-center">
-                <div className="text-[10px] font-black mb-1" style={{ color: '#2a2a2a' }}>AI EARNINGS ANALYSIS</div>
+                <div className="text-[10px] font-black mb-1" style={{ color: '#30363d' }}>AI EARNINGS ANALYSIS</div>
                 <p className="text-[9px] leading-relaxed" style={{ color: '#1f2937' }}>
                   Click ANALYZE to get AI-powered earnings picks<br />based on calendar and market news.
                 </p>

@@ -23,11 +23,11 @@ function KeyField({ label, desc, value, onChange, color }: {
           onChange={(e) => onChange(e.target.value)}
           placeholder={`Enter ${label.toLowerCase()}...`}
           className="flex-1 px-3 py-2 rounded text-[11px] font-mono outline-none border transition-colors"
-          style={{ background: '#111', borderColor: '#2a2a2a', color }}
+          style={{ background: '#1c2128', borderColor: '#30363d', color }}
           onFocus={(e) => (e.target.style.borderColor = color)}
-          onBlur={(e) => (e.target.style.borderColor = '#2a2a2a')}
+          onBlur={(e) => (e.target.style.borderColor = '#30363d')}
         />
-        <button onClick={() => setShow(!show)} className="px-2 rounded border hover:bg-[#1a1a1a] transition-colors" style={{ borderColor: '#2a2a2a' }}>
+        <button onClick={() => setShow(!show)} className="px-2 rounded border hover:bg-[#21262d] transition-colors" style={{ borderColor: '#30363d' }}>
           {show ? <EyeOff size={12} style={{ color: '#4b5563' }} /> : <Eye size={12} style={{ color: '#4b5563' }} />}
         </button>
       </div>
@@ -60,13 +60,13 @@ export default function SettingsModal({ onClose }: Props) {
       style={{ background: 'rgba(0,0,0,0.85)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="w-full max-w-md rounded-lg border p-6 overflow-y-auto" style={{ background: '#0a0a0a', borderColor: '#2a2a2a', maxHeight: '90vh' }}>
+      <div className="w-full max-w-md rounded-lg border p-6 overflow-y-auto" style={{ background: '#0a0a0a', borderColor: '#30363d', maxHeight: '90vh' }}>
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <Key size={14} style={{ color: '#f5a623' }} />
             <span className="text-[13px] font-black tracking-widest" style={{ color: '#f5a623' }}>API SETTINGS</span>
           </div>
-          <button onClick={onClose} className="p-1 rounded hover:bg-[#1a1a1a] transition-colors">
+          <button onClick={onClose} className="p-1 rounded hover:bg-[#21262d] transition-colors">
             <X size={14} style={{ color: '#6b7280' }} />
           </button>
         </div>
@@ -93,7 +93,7 @@ export default function SettingsModal({ onClose }: Props) {
           color="#a78bfa"
         />
 
-        <div className="rounded p-3 mb-4 text-[9px] leading-relaxed" style={{ background: '#111', border: '1px solid #1a1a1a', color: '#4b5563' }}>
+        <div className="rounded p-3 mb-4 text-[9px] leading-relaxed" style={{ background: '#1c2128', border: '1px solid #1a1a1a', color: '#4b5563' }}>
           Keys are stored in your browser&apos;s localStorage and sent securely on each request. Never stored externally.
         </div>
 

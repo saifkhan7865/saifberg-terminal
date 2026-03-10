@@ -74,8 +74,9 @@ export interface FHEarningsCalendar {
   earningsCalendar: FHEarning[];
 }
 
-export async function getEarningsCalendar(from: string, to: string, apiKey?: string): Promise<FHEarning[]> {
-  const data = await fhFetch<FHEarningsCalendar>(`/calendar/earnings?from=${from}&to=${to}`, apiKey);
+export async function getEarningsCalendar(from: string, to: string, apiKey?: string, symbol?: string): Promise<FHEarning[]> {
+  const symParam = symbol ? `&symbol=${encodeURIComponent(symbol)}` : '';
+  const data = await fhFetch<FHEarningsCalendar>(`/calendar/earnings?from=${from}&to=${to}${symParam}`, apiKey);
   return data?.earningsCalendar ?? [];
 }
 
