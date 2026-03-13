@@ -1,5 +1,7 @@
 # Saifberg Terminal
 
+**[🚀 Live Demo → saifberg-terminal.vercel.app](https://saifberg-terminal.vercel.app)**
+
 A Bloomberg-style financial terminal built with Next.js 15, powered by real market data and AI analysis. Mobile-responsive and fully open source.
 
 ## Features
