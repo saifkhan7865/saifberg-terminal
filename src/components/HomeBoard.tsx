@@ -263,7 +263,7 @@ export default function HomeBoard({ onSelect }: Props) {
             </div>
             <span className="text-[10px]" style={{ color: '#8b949e' }}>{mktStatus.detail}</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="hidden md:flex items-center gap-1.5">
             <span className="text-[9px] mr-1 font-bold tracking-widest" style={{ color: '#484f58' }}>QUICK JUMP</span>
             {['AAPL', 'MSFT', 'NVDA', 'TSLA', 'GOOGL', 'META', 'AMZN', 'BTCUSD'].map(s => (
               <button key={s} onClick={() => onSelect(s)}
@@ -274,13 +274,13 @@ export default function HomeBoard({ onSelect }: Props) {
           </div>
         </div>
         {/* Index ticker */}
-        <div className="flex">
+        <div className="flex overflow-x-auto scrollbar-none">
           {INDEX_META.map(({ symbol, label, color }) => {
             const q  = quotes[symbol];
             const up = (q?.changesPercentage ?? 0) >= 0;
             return (
               <div key={symbol} onClick={() => onSelect(symbol)}
-                className="flex-1 px-3 py-2.5 cursor-pointer hover:bg-[#080808] transition-all border-r"
+                className="flex-1 min-w-[80px] px-3 py-2.5 cursor-pointer hover:bg-[#080808] transition-all border-r"
                 style={{ borderColor: '#1c2128' }}
               >
                 <div className="text-[8px] font-black tracking-[0.15em] mb-0.5" style={{ color: '#6e7681' }}>{label}</div>
@@ -305,14 +305,14 @@ export default function HomeBoard({ onSelect }: Props) {
       </div>
 
       {/* ══ TAB BAR ══════════════════════════════════════════════════ */}
-      <div className="flex flex-shrink-0 border-b px-2 gap-1 items-end" style={{ borderColor: '#21262d', background: '#161b22', paddingTop: 6 }}>
+      <div className="flex flex-shrink-0 border-b px-2 gap-1 items-end overflow-x-auto scrollbar-none" style={{ borderColor: '#21262d', background: '#161b22', paddingTop: 6 }}>
         {HOME_TABS.map(tab => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className="px-4 py-2 text-[11px] font-black tracking-[0.12em] transition-all flex items-center gap-2 rounded-t"
+              className="flex-shrink-0 px-4 py-2 text-[11px] font-black tracking-[0.12em] transition-all flex items-center gap-2 rounded-t"
               style={{
                 borderBottom: `2px solid ${isActive ? tab.color : 'transparent'}`,
                 color: isActive ? tab.color : '#8b949e',
@@ -357,10 +357,10 @@ export default function HomeBoard({ onSelect }: Props) {
       )}
 
       {/* ══ MAIN 3-COLUMN BODY ══════════════════════════════════════ */}
-      <div className={`flex flex-1 overflow-hidden${activeTab !== 'OVERVIEW' ? ' hidden' : ''}`} style={{ minHeight: 0 }}>
+      <div className={`flex flex-col lg:flex-row flex-1 overflow-hidden${activeTab !== 'OVERVIEW' ? ' hidden' : ''}`} style={{ minHeight: 0 }}>
 
         {/* ── LEFT: Sectors ──────────────────────────────────────── */}
-        <div className="flex-shrink-0 flex flex-col overflow-hidden border-r" style={{ width: 210, borderColor: '#21262d' }}>
+        <div className="flex-shrink-0 flex flex-col overflow-hidden border-b lg:border-b-0 lg:border-r w-full lg:w-[210px] max-h-[260px] lg:max-h-none" style={{ borderColor: '#21262d' }}>
           <div className="flex items-center justify-between px-3 py-2 border-b flex-shrink-0" style={{ borderColor: '#21262d' }}>
             <span className="text-[9px] font-black tracking-[0.2em]" style={{ color: '#8b949e' }}>SECTOR PERFORMANCE</span>
             <div className="flex gap-2">
@@ -404,7 +404,7 @@ export default function HomeBoard({ onSelect }: Props) {
         </div>
 
         {/* ── CENTER: Movers OR Sector Stocks ────────────────────── */}
-        <div className="flex-1 flex flex-col overflow-hidden border-r" style={{ borderColor: '#21262d', minWidth: 0 }}>
+        <div className="flex-1 flex flex-col overflow-hidden lg:border-r" style={{ borderColor: '#21262d', minWidth: 0 }}>
 
           {activeSector ? (
             /* Sector Stocks drill-down */
@@ -456,9 +456,18 @@ export default function HomeBoard({ onSelect }: Props) {
                         style={{ borderColor: '#21262d' }}
                       >
                         <div className="w-5 text-[8px] font-mono flex-shrink-0" style={{ color: '#484f58' }}>{i + 1}</div>
+                        <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0 mr-2"
+                          style={{ background: '#1c2128', border: '1px solid #21262d' }}>
+                          <img
+                            src={`https://financialmodelingprep.com/image-stock/${s.symbol}.png`}
+                            alt={s.symbol}
+                            className="w-full h-full object-contain p-0.5"
+                            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                          />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-[11px] font-black leading-none" style={{ color: '#e2c97e' }}>{s.symbol}</div>
-                          <div className="text-[8px] truncate mt-0.5 max-w-[180px]" style={{ color: '#6e7681' }}>{s.industry}</div>
+                          <div className="text-[8px] truncate mt-0.5 max-w-[160px]" style={{ color: '#6e7681' }}>{s.industry}</div>
                         </div>
                         <div className="w-[90px] text-right text-[10px] font-mono font-bold" style={{ color: '#e2c97e' }}>
                           {fmtB(s.marketCap)}
@@ -534,9 +543,19 @@ export default function HomeBoard({ onSelect }: Props) {
                         >
                           <div className="absolute inset-y-0 left-0 opacity-[0.06]" style={{ width: `${barW}%`, background: c }} />
                           <div className="relative w-5 text-[8px] font-mono flex-shrink-0" style={{ color: '#484f58' }}>{i + 1}</div>
+                          {/* Logo */}
+                          <div className="relative w-8 h-8 rounded overflow-hidden flex-shrink-0 mr-2"
+                            style={{ background: '#1c2128', border: '1px solid #21262d' }}>
+                            <img
+                              src={`https://financialmodelingprep.com/image-stock/${m.symbol}.png`}
+                              alt={m.symbol}
+                              className="w-full h-full object-contain p-0.5"
+                              onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                          </div>
                           <div className="relative flex-1 min-w-0">
                             <div className="text-[11px] font-black leading-none" style={{ color: '#e2c97e' }}>{m.symbol}</div>
-                            <div className="text-[8px] truncate mt-0.5 max-w-[140px]" style={{ color: '#6e7681' }}>{m.shortName}</div>
+                            <div className="text-[8px] truncate mt-0.5 max-w-[120px]" style={{ color: '#6e7681' }}>{m.shortName}</div>
                           </div>
                           <div className="relative w-[80px] text-right">
                             <div className="text-[12px] font-black font-mono" style={{ color: c }}>{fmtPct(m.changePercent)}</div>
@@ -560,7 +579,7 @@ export default function HomeBoard({ onSelect }: Props) {
         </div>
 
         {/* ── RIGHT: News + AI Brief ──────────────────────────────── */}
-        <div className="flex-shrink-0 flex flex-col overflow-hidden" style={{ width: 360 }}>
+        <div className="hidden lg:flex flex-shrink-0 flex-col overflow-hidden" style={{ width: 360 }}>
 
           {/* Panel header */}
           <div className="flex items-center justify-between px-3 py-2 border-b flex-shrink-0"

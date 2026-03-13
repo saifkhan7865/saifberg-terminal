@@ -138,3 +138,7 @@ input:focus { outline: none; }
   font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
   color: #6e7681; text-transform: uppercase;
 }
+
+/* Hide scrollbar utility */
+.scrollbar-none { scrollbar-width: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }

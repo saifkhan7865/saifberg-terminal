@@ -203,7 +203,18 @@ export default function StockSidebar({ symbol, onSelectTicker }: Props) {
                     onMouseEnter={e => (e.currentTarget.style.background = '#161b22')}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
-                    <span className="text-[11px] font-black" style={{ color: '#e2c97e' }}>{p}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded overflow-hidden flex-shrink-0"
+                        style={{ background: '#1c2128', border: '1px solid #21262d' }}>
+                        <img
+                          src={`https://financialmodelingprep.com/image-stock/${p}.png`}
+                          alt={p}
+                          className="w-full h-full object-contain p-0.5"
+                          onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      </div>
+                      <span className="text-[11px] font-black" style={{ color: '#e2c97e' }}>{p}</span>
+                    </div>
                     <div className="text-right">
                       {q ? (
                         <>

@@ -105,6 +105,16 @@ export default function PeersBar({ symbol, onSelectTicker }: Props) {
                       CONSIDER
                     </div>
                   )}
+                  {/* Logo */}
+                  <div className="w-7 h-7 rounded overflow-hidden mb-0.5 flex-shrink-0"
+                    style={{ background: '#0d111780' }}>
+                    <img
+                      src={`https://financialmodelingprep.com/image-stock/${p.symbol}.png`}
+                      alt={p.symbol}
+                      className="w-full h-full object-contain p-0.5"
+                      onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  </div>
                   <span className="text-[9px] font-black tracking-wide" style={{ color: '#e2c97e' }}>{p.symbol}</span>
                   <div className="flex items-center gap-0.5 mt-0.5" style={{ color }}>
                     {up ? <TrendingUp size={7} /> : <TrendingDown size={7} />}

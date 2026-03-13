@@ -64,8 +64,10 @@ export default function TerminalHeader({ currentSymbol, onSelect, onHome }: Prop
       {/* Divider */}
       <div className="w-px h-5 flex-shrink-0" style={{ background: '#21262d' }} />
 
-      {/* Search */}
-      <SearchBar onSelect={onSelect} currentSymbol={currentSymbol} />
+      {/* Search — flex-1 on mobile so it fills available space */}
+      <div className="flex-1 lg:flex-none">
+        <SearchBar onSelect={onSelect} currentSymbol={currentSymbol} />
+      </div>
 
       {/* Quick tickers */}
       <div className="hidden lg:flex items-center gap-0.5 flex-shrink-0">
@@ -107,10 +109,10 @@ export default function TerminalHeader({ currentSymbol, onSelect, onHome }: Prop
 
       {/* Clock */}
       <div className="flex-shrink-0 text-right">
-        <div className="text-[15px] font-bold font-mono tracking-widest" style={{ color: '#e6edf3' }}>
+        <div className="text-[13px] sm:text-[15px] font-bold font-mono tracking-widest" style={{ color: '#e6edf3' }}>
           {time}<span className="blink" style={{ color: '#f5a623' }}>_</span>
         </div>
-        <div className="text-[10px] font-mono" style={{ color: '#6e7681' }}>
+        <div className="hidden sm:block text-[10px] font-mono" style={{ color: '#6e7681' }}>
           {date} EST
         </div>
       </div>

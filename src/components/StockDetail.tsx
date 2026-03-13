@@ -180,9 +180,10 @@ function CommandBar({ symbol, activeCmd, onExecute }: {
 
 interface Props {
   symbol: string;
+  mobileCmd?: string;
 }
 
-export default function StockDetail({ symbol }: Props) {
+export default function StockDetail({ symbol, mobileCmd }: Props) {
   const [quote, setQuote] = useState<QuoteData | null>(null);
   const [fundamentals, setFundamentals] = useState<FundamentalsData | null>(null);
   const [signal, setSignal] = useState<SignalResult | null>(null);
@@ -224,6 +225,10 @@ export default function StockDetail({ symbol }: Props) {
   }, [symbol, fetchQuote, fetchFundamentals]);
 
   useEffect(() => {
+    if (mobileCmd) setActiveCmd(mobileCmd as Cmd);
+  }, [mobileCmd]);
+
+  useEffect(() => {
     if (fundamentals && quote) setSignal(calculateSignal(fundamentals, quote));
   }, [fundamentals, quote]);
 
@@ -258,10 +263,20 @@ export default function StockDetail({ symbol }: Props) {
           <>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-3">
+                {/* Company logo */}
+                <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0"
+                  style={{ background: '#1c2128', border: '1px solid #30363d' }}>
+                  <img
+                    src={`https://financialmodelingprep.com/image-stock/${symbol}.png`}
+                    alt={symbol}
+                    className="w-full h-full object-contain p-1"
+                    onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                </div>
                 <span className="text-lg font-black tracking-widest glow-amber" style={{ color: '#f5a623' }}>{symbol}</span>
                 <span className="text-[11px]" style={{ color: '#6b7280' }}>{quote.longName || quote.shortName || ''}</span>
                 {quote.exchange && (
-                  <span className="text-[9px] font-bold px-1 py-0.5 rounded" style={{ background: '#21262d', color: '#4b5563', border: '1px solid #2a2a2a' }}>
+                  <span className="text-[9px] font-bold px-1 py-0.5 rounded" style={{ background: '#21262d', color: '#6e7681', border: '1px solid #30363d' }}>
                     {quote.exchange}
                   </span>
                 )}
@@ -319,7 +334,7 @@ export default function StockDetail({ symbol }: Props) {
             </div>
 
             {lastUpdated && (
-              <div className="flex items-center gap-1 mt-1">
+              <div className="hidden sm:flex items-center gap-1 mt-1">
                 <Wifi size={8} style={{ color: '#484f58' }} />
                 <span className="text-[9px]" style={{ color: '#484f58' }}>{lastUpdated.toLocaleTimeString('en-US', { hour12: false })}</span>
               </div>

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { Brain, RefreshCw, AlertCircle, TrendingUp, TrendingDown, Target, Zap, Shield } from 'lucide-react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { Brain, RefreshCw, AlertCircle, TrendingUp, TrendingDown, Target, Zap, Shield, Send, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
 import { apiFetch } from '@/lib/apiClient';
 
 interface Props {
@@ -24,6 +24,11 @@ interface ParsedAnalysis {
     conviction: string;
     keyRisk: string;
   } | null;
+}
+
+interface ChatMessage {
+  role: 'user' | 'ai';
+  text: string;
 }
 
 function parseAnalysis(text: string): ParsedAnalysis {
@@ -107,15 +112,12 @@ function SentimentGauge({ rating }: { rating: string }) {
         <span>BEARISH</span><span>NEUTRAL</span><span>BULLISH</span>
       </div>
       <div className="relative h-2 rounded-full overflow-hidden" style={{ background: '#1c2128' }}>
-        {/* gradient track */}
         <div className="absolute inset-0 rounded-full" style={{
           background: 'linear-gradient(to right, #ef4444 0%, #fbbf24 50%, #22c55e 100%)',
           opacity: 0.15,
         }} />
-        {/* filled */}
         <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-700"
           style={{ width: `${score}%`, background: color, opacity: 0.8 }} />
-        {/* cursor */}
         <div className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border-2 shadow-lg transition-all duration-700"
           style={{ left: `calc(${score}% - 5px)`, background: color, borderColor: '#000' }} />
       </div>
@@ -123,6 +125,17 @@ function SentimentGauge({ rating }: { rating: string }) {
     </div>
   );
 }
+
+// ─── Quick question chips ─────────────────────────────────────────────────────
+
+const QUICK_QUESTIONS = [
+  { label: 'Why up today?',      q: 'Why is the stock up today?' },
+  { label: 'Why down today?',    q: 'Why is the stock down today?' },
+  { label: 'Will it rally?',     q: 'Will it continue to rally from here?' },
+  { label: 'Buy now?',           q: 'Should I buy this stock right now?' },
+  { label: 'Key risks?',         q: 'What are the biggest risks I should know about?' },
+  { label: 'Fair value?',        q: 'What is the fair value of this stock?' },
+];
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -133,13 +146,27 @@ export default function AIAnalysis({ symbol }: Props) {
   const [hasRun, setHasRun]       = useState(false);
   const [analyzedSym, setAnalyzedSym] = useState('');
 
+  // Chat state
+  const [chatOpen, setChatOpen]   = useState(true);
+  const [messages, setMessages]   = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [cachedCtx, setCachedCtx] = useState<{ fundamentals: unknown; quote: unknown } | null>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (symbol !== analyzedSym && hasRun) {
       setParsed(null);
       setHasRun(false);
       setError('');
+      setMessages([]);
+      setCachedCtx(null);
     }
   }, [symbol, analyzedSym, hasRun]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, chatLoading]);
 
   const run = useCallback(async () => {
     setLoading(true);
@@ -153,6 +180,7 @@ export default function AIAnalysis({ symbol }: Props) {
       ]);
       const fundamentals = fundRes.status  === 'fulfilled' ? fundRes.value  : null;
       const quote        = quoteRes.status === 'fulfilled' ? quoteRes.value : null;
+      setCachedCtx({ fundamentals, quote });
       const res  = await apiFetch('/api/ai-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -167,6 +195,49 @@ export default function AIAnalysis({ symbol }: Props) {
       setLoading(false);
     }
   }, [symbol]);
+
+  const sendChat = useCallback(async (question: string) => {
+    if (!question.trim() || chatLoading) return;
+    setChatInput('');
+    setMessages(prev => [...prev, { role: 'user', text: question }]);
+    setChatLoading(true);
+
+    try {
+      // Fetch context if not cached
+      let ctx = cachedCtx;
+      if (!ctx) {
+        const [fundRes, quoteRes] = await Promise.allSettled([
+          apiFetch(`/api/fundamentals?symbol=${symbol}`).then(r => r.json()),
+          apiFetch(`/api/quote?symbol=${symbol}`).then(r => r.json()),
+        ]);
+        ctx = {
+          fundamentals: fundRes.status === 'fulfilled' ? fundRes.value : null,
+          quote: quoteRes.status === 'fulfilled' ? quoteRes.value : null,
+        };
+        setCachedCtx(ctx);
+      }
+
+      const analysisContext = parsed
+        ? `Rating: ${parsed.verdict?.rating || 'N/A'}\nSummary: ${parsed.summary}\nBull: ${parsed.bulls.join('; ')}\nBear: ${parsed.bears.join('; ')}`
+        : null;
+
+      const res = await apiFetch('/api/ai-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ symbol, question, ...ctx, analysisContext }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        setMessages(prev => [...prev, { role: 'ai', text: `Error: ${data.error}` }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'ai', text: data.answer }]);
+      }
+    } catch {
+      setMessages(prev => [...prev, { role: 'ai', text: 'Failed to reach AI. Check your Gemini key.' }]);
+    } finally {
+      setChatLoading(false);
+    }
+  }, [symbol, cachedCtx, parsed, chatLoading]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -185,7 +256,8 @@ export default function AIAnalysis({ symbol }: Props) {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      {/* Analysis content */}
+      <div className="flex-1 overflow-y-auto min-h-0">
         {/* Idle state */}
         {!hasRun && !loading && (
           <div className="flex flex-col items-center justify-center h-full gap-4 p-6">
@@ -289,7 +361,6 @@ export default function AIAnalysis({ symbol }: Props) {
 
               {/* Bull / Bear */}
               <div className="grid grid-cols-2 gap-2">
-                {/* Bull */}
                 <div className="rounded p-2.5" style={{ background: '#021208', border: '1px solid #14532d' }}>
                   <div className="flex items-center gap-1 mb-2">
                     <TrendingUp size={10} style={{ color: '#22c55e' }} />
@@ -305,7 +376,6 @@ export default function AIAnalysis({ symbol }: Props) {
                   </div>
                 </div>
 
-                {/* Bear */}
                 <div className="rounded p-2.5" style={{ background: '#120303', border: '1px solid #7f1d1d' }}>
                   <div className="flex items-center gap-1 mb-2">
                     <TrendingDown size={10} style={{ color: '#ef4444' }} />
@@ -365,6 +435,116 @@ export default function AIAnalysis({ symbol }: Props) {
             </div>
           );
         })()}
+      </div>
+
+      {/* ── Ask AI Analyst chat panel ─────────────────────────────────────────── */}
+      <div className="flex-shrink-0 border-t" style={{ borderColor: '#21262d' }}>
+        {/* Chat header toggle */}
+        <button
+          onClick={() => setChatOpen(v => !v)}
+          className="w-full flex items-center justify-between px-3 py-2 transition-colors hover:bg-[#161b22]"
+        >
+          <div className="flex items-center gap-2">
+            <MessageSquare size={10} style={{ color: '#a78bfa' }} />
+            <span className="text-[9px] font-black tracking-widest" style={{ color: '#a78bfa' }}>ASK AI ANALYST</span>
+            {messages.length > 0 && (
+              <span className="text-[8px] px-1.5 py-0.5 rounded-full font-bold"
+                style={{ background: '#2d1b69', color: '#a78bfa' }}>
+                {messages.filter(m => m.role === 'ai').length}
+              </span>
+            )}
+          </div>
+          {chatOpen ? <ChevronDown size={10} style={{ color: '#484f58' }} /> : <ChevronUp size={10} style={{ color: '#484f58' }} />}
+        </button>
+
+        {chatOpen && (
+          <div className="flex flex-col" style={{ maxHeight: 280 }}>
+            {/* Messages */}
+            {messages.length > 0 && (
+              <div className="overflow-y-auto px-3 py-2 space-y-2" style={{ maxHeight: 180 }}>
+                {messages.map((msg, i) => (
+                  <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    {msg.role === 'ai' && (
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                        style={{ background: '#1e1033', border: '1px solid #4c1d95' }}>
+                        <Brain size={9} style={{ color: '#a78bfa' }} />
+                      </div>
+                    )}
+                    <div
+                      className="rounded-lg px-2.5 py-1.5 text-[10px] leading-relaxed max-w-[85%]"
+                      style={msg.role === 'user'
+                        ? { background: '#1c2128', border: '1px solid #30363d', color: '#e2c97e' }
+                        : { background: '#0d0720', border: '1px solid #2d1b69', color: '#c4b5fd' }
+                      }
+                    >
+                      {msg.text}
+                    </div>
+                  </div>
+                ))}
+                {chatLoading && (
+                  <div className="flex gap-2 justify-start">
+                    <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ background: '#1e1033', border: '1px solid #4c1d95' }}>
+                      <Brain size={9} style={{ color: '#a78bfa' }} className="animate-pulse" />
+                    </div>
+                    <div className="rounded-lg px-3 py-2" style={{ background: '#0d0720', border: '1px solid #2d1b69' }}>
+                      <div className="flex gap-1 items-center">
+                        <div className="w-1 h-1 rounded-full animate-bounce" style={{ background: '#a78bfa', animationDelay: '0ms' }} />
+                        <div className="w-1 h-1 rounded-full animate-bounce" style={{ background: '#a78bfa', animationDelay: '150ms' }} />
+                        <div className="w-1 h-1 rounded-full animate-bounce" style={{ background: '#a78bfa', animationDelay: '300ms' }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+            )}
+
+            {/* Quick question chips */}
+            {messages.length === 0 && (
+              <div className="px-3 py-2">
+                <div className="text-[8px] font-bold mb-1.5 tracking-widest" style={{ color: '#484f58' }}>QUICK QUESTIONS</div>
+                <div className="flex flex-wrap gap-1">
+                  {QUICK_QUESTIONS.map(({ label, q }) => (
+                    <button
+                      key={label}
+                      onClick={() => sendChat(q)}
+                      disabled={chatLoading}
+                      className="px-2 py-1 rounded text-[9px] font-bold transition-all disabled:opacity-40"
+                      style={{ background: '#1c2128', border: '1px solid #30363d', color: '#8b949e' }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = '#a78bfa40'; e.currentTarget.style.color = '#c4b5fd'; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = '#30363d'; e.currentTarget.style.color = '#8b949e'; }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Input row */}
+            <div className="px-3 py-2 flex gap-2 items-center border-t" style={{ borderColor: '#21262d' }}>
+              <input
+                type="text"
+                value={chatInput}
+                onChange={e => setChatInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(chatInput); } }}
+                placeholder={`Ask about ${symbol}...`}
+                className="flex-1 bg-transparent outline-none text-[10px] rounded px-2.5 py-1.5"
+                style={{ background: '#1c2128', border: '1px solid #30363d', color: '#e2c97e', caretColor: '#a78bfa' }}
+                disabled={chatLoading}
+              />
+              <button
+                onClick={() => sendChat(chatInput)}
+                disabled={!chatInput.trim() || chatLoading}
+                className="p-1.5 rounded transition-all disabled:opacity-40"
+                style={{ background: chatInput.trim() ? '#1e1033' : '#1c2128', border: '1px solid #4c1d95' }}
+              >
+                <Send size={10} style={{ color: '#a78bfa' }} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

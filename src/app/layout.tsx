@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SAIFBERG TERMINAL",
-  description: "Professional Bloomberg-style financial terminal",
+  title: "Saifberg Terminal",
+  description: "Bloomberg-style financial terminal — live quotes, AI analysis, earnings calendar, options flow, and more.",
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
